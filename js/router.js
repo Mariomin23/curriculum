@@ -10,10 +10,10 @@ const routes = {
             const t = getT();
             return `
                 <div class="row align-items-center mb-5 fade-in">
-                    <div class="col-lg-5 mt-3 mt-lg-0 text-center order-first order-lg-last">
+                    <div class="col-lg-5 mt-2 mt-lg-0 text-center order-first order-lg-last">
                         <img src="MarioCvdef.jpg" alt="Mario Minuesa" class="hero-profile-img mx-auto" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; object-position: center top;">
                     </div>
-                    <div class="col-lg-7 text-lg-end mb-3 mb-lg-0">
+                    <div class="col-lg-7 text-lg-end mb-5 mb-lg-0">
                         <h1 class="hero-title mb-3">${t.hero_title}</h1>
                         <h2 class="h3 text-primary mb-4 hero-subtitle">${t.hero_subtitle}</h2>
                         <p class="lead text-muted mb-5">${t.hero_desc}</p>
