@@ -20,6 +20,12 @@ body {
 }
 
 /* WhatsApp Button */
+#langIcon {
+    font-size: 1.5rem;
+    line-height: 1;
+    display: inline-block;
+}
+
 .whatsapp-btn {
     position: fixed;
     bottom: 30px;
