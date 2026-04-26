@@ -12,17 +12,15 @@ const routes = {
                 <div class="row align-items-center mb-5 fade-in">
                     <div class="col-lg-7">
                         <h1 class="hero-title mb-3">${t.hero_title}</h1>
-                        <h2 class="h3 text-primary mb-4">${t.hero_subtitle}</h2>
+                        <h2 class="h3 text-primary mb-4 hero-subtitle">${t.hero_subtitle}</h2>
                         <p class="lead text-muted mb-5">${t.hero_desc}</p>
-                        <div class="d-flex gap-3">
-                            <a href="#/proyectos" class="btn btn-primary btn-lg px-4">${t.hero_btn_projects}</a>
-                            <a href="#/sobre-mi" class="btn btn-outline-secondary btn-lg px-4">${t.hero_btn_about}</a>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#/proyectos" class="btn btn-primary btn-lg px-4 hero-btn">${t.hero_btn_projects}</a>
+                            <a href="#/sobre-mi" class="btn btn-outline-secondary btn-lg px-4 hero-btn">${t.hero_btn_about}</a>
                         </div>
                     </div>
                     <div class="col-lg-5 mt-5 mt-lg-0 text-center">
-                        <div class="img-placeholder mx-auto" style="width: 300px; height: 300px; border-radius: 50%;">
-                            <i class="bi bi-person-fill"></i>
-                        </div>
+                        <img src="MarioCvdef.jpg" alt="Mario Minuesa" class="hero-profile-img mx-auto" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; object-position: center top;">
                     </div>
                 </div>
             `;
@@ -72,7 +70,7 @@ const routes = {
                             <p class="fs-5">${t.about_p2}</p>
                         </div>
                         <div class="col-md-4">
-                            <div class="card bg-primary text-white p-4 shadow">
+                            <div class="card bg-primary text-white p-4 shadow about-card">
                                 <h3>${t.about_sidebar_title}</h3>
                                 <ul class="list-unstyled">
                                     <li class="mb-2"><i class="bi bi-mortarboard-fill me-2"></i> ${t.about_edu_1}</li>
@@ -93,7 +91,7 @@ const routes = {
                 <div class="fade-in text-center py-5">
                     <h2 class="mb-4">${t.cv_header}</h2>
                     <p class="lead text-muted mb-5">${t.cv_desc}</p>
-                    <div class="img-placeholder mb-4 mx-auto" style="max-width: 200px; height: 260px;">
+                    <div class="img-placeholder mb-4 mx-auto cv-pdf-placeholder" style="max-width: 200px; height: 260px;">
                         <i class="bi bi-file-earmark-pdf"></i>
                     </div>
                     <a href="cv_mario_minuesa.pdf" class="btn btn-primary btn-lg shadow px-5" download>
