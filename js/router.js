@@ -91,8 +91,8 @@ const routes = {
                 <div class="fade-in text-center py-5">
                     <h2 class="mb-4">${t.cv_header}</h2>
                     <p class="lead text-muted mb-5">${t.cv_desc}</p>
-                    <img src="mario minuesa cv full stack.jpg" alt="CV Mario Minuesa" class="mb-4 mx-auto cv-pdf-placeholder" style="max-width: 200px; height: 260px; object-fit: cover;">
-                    <a href="mario minuesa cv full stack.pdf" class="btn btn-primary btn-lg shadow px-5" download>
+                    <img src="cv.jpg" alt="CV Mario Minuesa" class="d-block mx-auto mb-4 cv-pdf-placeholder" style="max-width: 200px; height: 260px; object-fit: cover;">
+                    <a href="cv.pdf" class="btn btn-primary btn-lg shadow px-5" download>
                         <i class="bi bi-download me-2"></i> ${t.cv_btn}
                     </a>
                 </div>
