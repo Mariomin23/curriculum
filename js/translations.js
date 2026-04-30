@@ -26,7 +26,7 @@ const translations = {
         // About
         about_page_title: "Sobre Mí | Mario Minuesa",
         about_header: "Mi Historia",
-        about_p1: "Comencé mi camino en la tecnología como <strong>Técnico en Sistemas Microinformáticos y Redes</strong>, donde aprendí como funciona el hardware y la  que lo acompaña.",
+        about_p1: "Comencé mi camino en la tecnología como <strong>Técnico en Sistemas Microinformáticos y Redes</strong>, donde aprendí como funciona el hardware y todo lo que lo acompaña.",
         about_p2: "Mi curiosidad me llevó al desarrollo <strong>Fullstack</strong>, buscando no solo entender cómo funcionan las máquinas, sino crear soluciones sobre ellas. Recientemente graduado, estoy listo para aportar mi visión técnica y creativa.",
         about_sidebar_title: "Formación",
         about_edu_1: "Fullstack Web Developer",
