@@ -68,7 +68,7 @@ const translations = {
         // About
         about_page_title: "About Me | Mario Minuesa",
         about_header: "My Story",
-        about_p1: "I started my path in technology as a <strong>Microcomputer Systems and Networks Technician</strong>, where I learnt how the hardware works and the software that goes with it",
+        about_p1: "I started my path in technology as a <strong>Microcomputer Systems and Networks Technician</strong>, where I learnt how the hardware works and the software that goes with it.",
         about_p2: "My curiosity led me to <strong>Fullstack</strong> development, seeking not only to understand how machines work, but to create solutions on top of them. Recently graduated, I am ready to contribute my technical and creative vision.",
         about_sidebar_title: "Education",
         about_edu_1: "Fullstack Web Developer",
