@@ -137,7 +137,7 @@ const routes = {
             </style>
 
             <div class="fade-in text-center py-5">
-                <h2 class="mb-4 fw-bold text-dark">${t.cv_header}</h2>
+              
                 <p class="lead text-muted mb-5 mx-auto" style="max-width: 600px;">${t.cv_desc}</p>
                 
                 <!-- Card de previsualización -->
