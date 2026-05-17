@@ -77,7 +77,7 @@ const routes = {
                             <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" class="social-link" title="LinkedIn">
                                 <i class="bi bi-linkedin"></i>
                             </a>
-                            <a href="mailto:mario.minuesa@gmail.com" class="social-link" title="Email">
+                            <a href="mailto:hola@tripleeme.es" class="social-link" title="Email">
                                 <i class="bi bi-envelope-fill"></i>
                             </a>
                         </div>
@@ -273,8 +273,8 @@ const routes = {
                                     <i class="bi bi-envelope-fill text-primary"></i>
                                 </div>
                                 <h6 class="fw-bold mb-1">${t.contact_email_label}</h6>
-                                <p class="text-muted small mb-3">mario.minuesa@gmail.com</p>
-                                <a href="mailto:mario.minuesa@gmail.com" class="btn btn-sm btn-outline-primary">
+                                <p class="text-muted small mb-3">hola@tripleeme.es</p>
+                                <a href="mailto:hola@tripleeme.es" class="btn btn-sm btn-outline-primary">
                                     ${t.contact_btn_email}
                                 </a>
                             </div>
