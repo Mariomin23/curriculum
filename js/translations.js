@@ -1,86 +1,138 @@
 const translations = {
     es: {
-        // Navbar
         nav_home: "Inicio",
         nav_projects: "Proyectos",
+        nav_stack: "Stack",
         nav_about: "Sobre mí",
         nav_cv: "CV",
+        nav_contact: "Contacto",
+        nav_login: "Login",
         nav_theme_desc: "Cambiar tema",
         nav_lang_desc: "Cambiar idioma",
 
-        // Home
-        home_title: "Mario Minuesa | Inicio",
+        home_title: "Mario Minuesa | Desarrollador Fullstack",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "Recién graduado apasionado por crear experiencias digitales fluidas. Combinando mi base técnica en sistemas con el desarrollo moderno.",
+        hero_desc: "Recién graduado apasionado por crear experiencias digitales fluidas. Combino mi base técnica en sistemas con desarrollo web moderno para construir soluciones completas.",
         hero_btn_projects: "Ver Proyectos",
-        hero_btn_about: "Sobre mí",
+        hero_btn_contact: "Contactar",
 
-        // Projects
         projects_page_title: "Proyectos | Mario Minuesa",
         projects_header: "Mis Proyectos",
-        project_title: "Proyecto",
-        project_desc: "Una breve descripción de lo que hace este proyecto increíble utilizando tecnologías modernas.",
-        project_btn: "Ver Código",
+        projects_github: "GitHub",
+        projects_demo: "Demo",
+        projects_wip: "En desarrollo",
 
-        // About
+        stack_page_title: "Tech Stack | Mario Minuesa",
+        stack_header: "Stack Tecnológico",
+        stack_desc: "Tecnologías y herramientas con las que trabajo día a día.",
+        stack_cat_frontend: "Frontend",
+        stack_cat_backend: "Backend",
+        stack_cat_db: "Base de Datos",
+        stack_cat_tools: "Herramientas",
+
         about_page_title: "Sobre Mí | Mario Minuesa",
         about_header: "Mi Historia",
-        about_p1: "Comencé mi camino en la tecnología como <strong>Técnico en Sistemas Microinformáticos y Redes</strong>, donde aprendí como funciona el hardware y todo lo que lo acompaña.",
-        about_p2: "Mi curiosidad me llevó al desarrollo <strong>Fullstack</strong>, buscando no solo entender cómo funcionan las máquinas, sino crear soluciones sobre ellas. Recientemente graduado, estoy listo para aportar mi visión técnica y creativa.",
-        about_sidebar_title: "Formación",
-        about_edu_1: "Fullstack Web Developer",
-        about_edu_2: "Técnico en Sistemas y Redes",
+        about_p1: "Comencé en la tecnología como <strong>Técnico en Sistemas Microinformáticos y Redes</strong>, donde aprendí cómo funciona el hardware, las redes y los sistemas operativos desde sus cimientos.",
+        about_p2: "Mi curiosidad me llevó al desarrollo <strong>Fullstack</strong>, buscando no solo entender cómo funcionan las máquinas, sino crear soluciones sobre ellas. Recientemente graduado del bootcamp de Neoland, estoy listo para aportar visión técnica y creativa.",
+        about_timeline_title: "Formación",
+        about_edu_1_title: "Desarrollador Web Fullstack",
+        about_edu_1_org: "Neoland",
+        about_edu_1_date: "2024 – 2025",
+        about_edu_1_desc: "Bootcamp intensivo de desarrollo web. React, Node.js, bases de datos SQL y NoSQL, arquitectura MVC y despliegue en la nube.",
+        about_edu_2_title: "Técnico en Sistemas Microinformáticos y Redes",
+        about_edu_2_org: "FP",
+        about_edu_2_date: "2022 – 2024",
+        about_edu_2_desc: "Montaje y mantenimiento de equipos, redes locales, administración de sistemas Windows/Linux y ciberseguridad básica.",
 
-        // CV
         cv_page_title: "CV | Mario Minuesa",
         cv_header: "Currículum Vitae",
-        cv_desc: "Puedes descargar mi CV actualizado en formato PDF haciendo clic abajo.",
+        cv_desc: "Descarga mi CV actualizado en PDF o visualízalo directamente aquí.",
         cv_btn: "Descargar PDF",
 
-        // Footer
+        contact_page_title: "Contacto | Mario Minuesa",
+        contact_header: "Hablemos",
+        contact_desc: "¿Tienes un proyecto en mente o quieres hablar sobre oportunidades? Estoy disponible.",
+        contact_email_label: "Email",
+        contact_github_label: "GitHub",
+        contact_linkedin_label: "LinkedIn",
+        contact_btn_email: "Enviar Email",
+        contact_btn_github: "Ver perfil",
+        contact_btn_linkedin: "Conectar",
+        contact_wa: "También puedes escribirme por WhatsApp usando el botón flotante.",
+
+        login_tooltip: "Área para recruiters — próximamente",
+        login_toast_title: "Acceso restringido",
+        login_toast_body: "El área de recruiter estará disponible próximamente.",
+
         footer_text: "&copy; 2026 Mario Minuesa. Todo detalle cuenta."
     },
     en: {
-        // Navbar
         nav_home: "Home",
         nav_projects: "Projects",
+        nav_stack: "Stack",
         nav_about: "About Me",
         nav_cv: "CV",
+        nav_contact: "Contact",
+        nav_login: "Login",
         nav_theme_desc: "Change theme",
         nav_lang_desc: "Change language",
 
-        // Home
-        home_title: "Mario Minuesa | Home",
+        home_title: "Mario Minuesa | Fullstack Developer",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "Recent graduate passionate about creating fluid digital experiences. Combining my technical systems foundation with modern development.",
+        hero_desc: "Recent graduate passionate about creating fluid digital experiences. I combine my systems background with modern web development to build complete solutions.",
         hero_btn_projects: "View Projects",
-        hero_btn_about: "About Me",
+        hero_btn_contact: "Contact Me",
 
-        // Projects
         projects_page_title: "Projects | Mario Minuesa",
         projects_header: "My Projects",
-        project_title: "Project",
-        project_desc: "A brief description of what makes this project amazing using modern technologies.",
-        project_btn: "View Code",
+        projects_github: "GitHub",
+        projects_demo: "Demo",
+        projects_wip: "In progress",
 
-        // About
+        stack_page_title: "Tech Stack | Mario Minuesa",
+        stack_header: "Tech Stack",
+        stack_desc: "Technologies and tools I work with on a daily basis.",
+        stack_cat_frontend: "Frontend",
+        stack_cat_backend: "Backend",
+        stack_cat_db: "Database",
+        stack_cat_tools: "Tools",
+
         about_page_title: "About Me | Mario Minuesa",
         about_header: "My Story",
-        about_p1: "I started my path in technology as a <strong>Microcomputer Systems and Networks Technician</strong>, where I learnt how the hardware works and the software that goes with it.",
-        about_p2: "My curiosity led me to <strong>Fullstack</strong> development, seeking not only to understand how machines work, but to create solutions on top of them. Recently graduated, I am ready to contribute my technical and creative vision.",
-        about_sidebar_title: "Education",
-        about_edu_1: "Fullstack Web Developer",
-        about_edu_2: "Systems and Networks Technician",
+        about_p1: "I started in tech as a <strong>Microcomputer Systems and Networks Technician</strong>, learning how hardware, networks and operating systems work from the ground up.",
+        about_p2: "My curiosity led me to <strong>Fullstack</strong> development — not just understanding how machines work, but building solutions on top of them. Recently graduated from Neoland's bootcamp, I'm ready to bring technical and creative vision to any team.",
+        about_timeline_title: "Education",
+        about_edu_1_title: "Fullstack Web Developer",
+        about_edu_1_org: "Neoland",
+        about_edu_1_date: "2024 – 2025",
+        about_edu_1_desc: "Intensive web development bootcamp. React, Node.js, SQL and NoSQL databases, MVC architecture and cloud deployment.",
+        about_edu_2_title: "Microcomputer Systems & Networks Technician",
+        about_edu_2_org: "FP",
+        about_edu_2_date: "2022 – 2024",
+        about_edu_2_desc: "Hardware assembly and maintenance, local networks, Windows/Linux system administration and basic cybersecurity.",
 
-        // CV
         cv_page_title: "CV | Mario Minuesa",
         cv_header: "Curriculum Vitae",
-        cv_desc: "You can download my updated CV in PDF format by clicking below.",
+        cv_desc: "Download my updated CV in PDF format or view it directly here.",
         cv_btn: "Download PDF",
 
-        // Footer
+        contact_page_title: "Contact | Mario Minuesa",
+        contact_header: "Let's Talk",
+        contact_desc: "Have a project in mind or want to talk about opportunities? I'm available.",
+        contact_email_label: "Email",
+        contact_github_label: "GitHub",
+        contact_linkedin_label: "LinkedIn",
+        contact_btn_email: "Send Email",
+        contact_btn_github: "View profile",
+        contact_btn_linkedin: "Connect",
+        contact_wa: "You can also message me via WhatsApp using the floating button.",
+
+        login_tooltip: "Recruiter area — coming soon",
+        login_toast_title: "Restricted area",
+        login_toast_body: "The recruiter portal will be available soon.",
+
         footer_text: "&copy; 2026 Mario Minuesa. Every detail counts."
     }
 };

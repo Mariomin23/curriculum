@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mario Minuesa | Fullstack Developer & Systems Technician</title>
-    <meta name="description" content="Portfolio profesional de Mario Minuesa, Desarrollador Fullstack y Técnico en Sistemas.">
-    <!-- Bootstrap 5.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Mario Minuesa | Fullstack Developer</title>
+    <meta name="description" content="Portfolio profesional de Mario Minuesa, Desarrollador Fullstack y Técnico en Sistemas Microinformáticos y Redes.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,17 +15,22 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body">
         <div class="container">
-            <a class="navbar-brand fw-bold text-white" href="#/">Mario Minuesa</a>
+            <a class="navbar-brand fw-bold" href="#/">Mario Minuesa</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="#/" data-i18n="nav_home">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#/proyectos" data-i18n="nav_projects">Proyectos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#/sobre-mi" data-i18n="nav_about">Sobre mí</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#/curriculum" data-i18n="nav_cv">CV</a></li>
-                    <li class="nav-item ms-lg-3 d-flex gap-3 align-items-center">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-1">
+                    <li class="nav-item"><a class="nav-link" href="#/" data-route="/" data-i18n="nav_home">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#/proyectos" data-route="/proyectos" data-i18n="nav_projects">Proyectos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#/stack" data-route="/stack" data-i18n="nav_stack">Stack</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#/sobre-mi" data-route="/sobre-mi" data-i18n="nav_about">Sobre mí</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#/curriculum" data-route="/curriculum" data-i18n="nav_cv">CV</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#/contacto" data-route="/contacto" data-i18n="nav_contact">Contacto</a></li>
+                    <li class="nav-item ms-lg-2 d-flex align-items-center gap-2">
+                        <button id="loginBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3" data-i18n="nav_login" title="">
+                            <i class="bi bi-person-lock me-1"></i>Login
+                        </button>
                         <button id="langToggle" class="btn btn-link nav-link p-0" title="Cambiar idioma">
                             <span id="langIcon">🇬🇧</span>
                         </button>
@@ -42,25 +44,37 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main id="app-root" class="container py-5">
         <!-- Rendered by router.js -->
     </main>
 
-    <!-- Floating WhatsApp -->
+    <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/34653446625" class="whatsapp-btn shadow" target="_blank" title="Enviar WhatsApp">
         <i class="bi bi-whatsapp"></i>
     </a>
 
+    <!-- Login Toast -->
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+        <div id="loginToast" class="toast align-items-center" role="alert" aria-atomic="true" data-bs-delay="3500">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong id="loginToastTitle"></strong><br>
+                    <span id="loginToastBody"></span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 border-top bg-body-tertiary">
+    <footer class="footer py-3 border-top bg-body-tertiary">
         <div class="container text-center text-muted">
             <span class="small" data-i18n="footer_text">&copy; 2026 Mario Minuesa. Todo detalle cuenta.</span>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/translations.js"></script>
     <script src="js/router.js"></script>
     <script src="js/app.js"></script>
