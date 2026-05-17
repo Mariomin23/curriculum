@@ -25,14 +25,15 @@ La web debe residir en un subdominio personal. Debe transmitir profesionalismo, 
 - no gastes tokens en generar imagenes. 
 - pon modo oscuro o modo luz con un boton sencillo.
 - pon un boton flotante para enviarme un whatsapp al numero +34 653446625
-- Puedes usar bootstrap 5.3 para los estilos.
+- Puedes usar bootstrap para los estilos.
 # Key Sections to Implement
-1. **Hero Section**: Mi nombre, tagline (Fullstack Developer en formación) y un Call to Action claro.
+1. **Hero Section**: Mi nombre, tagline (Fullstack Developer ) y un Call to Action claro.
 2. **About Me**: Breve descripción de mi transición al mundo tech y mi pasión por el desarrollo.
 3. **Tech Stack**: Grid visual de tecnologías (React, Node.js, SQL, etc.).
 4. **Projects**: Galería de proyectos del bootcamp con links a GitHub y demos.
 5. **Experience/Education**: Línea de tiempo de mi formación actual.
 6. **Contact**: Formulario funcional o enlaces directos a LinkedIn/GitHub.
+7. En un futuro pondre usuario y contraseña. pon un boton de login para que los recruiters lo vean
 
 # Instructions
 - Prioriza la velocidad de carga.
