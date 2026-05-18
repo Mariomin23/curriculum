@@ -225,7 +225,7 @@ const routes = {
 
                     <div class="cv-preview-container d-inline-block p-3 rounded-4 shadow-sm mb-5 glass-card"
                          onclick="document.getElementById('cv-modal').classList.add('active')">
-                        <img src="cv.jpg" alt="CV Preview" class="rounded-3"
+                        <img src="cv.jpeg" alt="CV Preview" class="rounded-3"
                              style="width:220px;height:300px;object-fit:cover;">
                         <div class="mt-3 small text-primary fw-semibold">
                             <i class="bi bi-fullscreen me-1"></i> Ver a pantalla completa
