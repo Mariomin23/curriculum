@@ -14,8 +14,7 @@ router.get('/', async (req, res) => {
     });
     res.json(data);
   } catch (error) {
-    console.error('[content GET /]', error);
-    res.status(500).json({ message: 'Error al obtener el contenido', detail: error.message });
+    res.status(500).json({ message: 'Error al obtener el contenido' });
   }
 });
 
