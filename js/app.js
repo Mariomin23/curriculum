@@ -92,12 +92,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (loginForm) {
+        const loginSubmitBtn = loginForm.querySelector('button[type="submit"]');
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('loginUser').value;
+            const username = document.getElementById('loginUser').value.trim();
             const password = document.getElementById('loginPass').value;
-            
+
             loginError.classList.add('d-none');
+            if (loginSubmitBtn) {
+                loginSubmitBtn.disabled = true;
+                loginSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Entrando...';
+            }
 
             try {
                 const res = await fetch('/api/auth/login', {
@@ -105,16 +111,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await res.json();
-                
+
                 if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('role', data.role);
                     loginModal.hide();
                     loginForm.reset();
                     updateLoginState();
-                    location.hash = '/admin'; // Redirect to admin panel
+                    if (location.hash === '#/admin') {
+                        router();
+                    } else {
+                        location.hash = '/admin';
+                    }
                 } else {
                     loginError.textContent = data.message;
                     loginError.classList.remove('d-none');
@@ -122,6 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 loginError.textContent = 'Error de conexión con el servidor.';
                 loginError.classList.remove('d-none');
+            } finally {
+                if (loginSubmitBtn) {
+                    loginSubmitBtn.disabled = false;
+                    loginSubmitBtn.innerHTML = 'Iniciar Sesión';
+                }
             }
         });
     }

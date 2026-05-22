@@ -64,4 +64,28 @@ router.post('/register', auth, isAdmin, async (req, res) => {
   }
 });
 
+// LIST USERS (Admin only)
+router.get('/users', auth, isAdmin, async (req, res) => {
+  try {
+    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener usuarios' });
+  }
+});
+
+// DELETE USER (Admin only)
+router.delete('/users/:id', auth, isAdmin, async (req, res) => {
+  try {
+    if (req.user.userId === req.params.id) {
+      return res.status(400).json({ message: 'No puedes eliminar tu propia cuenta' });
+    }
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({ message: 'Usuario eliminado' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar usuario' });
+  }
+});
+
 module.exports = router;
