@@ -347,8 +347,9 @@ const routes = {
                     <td class="align-middle"><code class="small">${escHtml(u.username)}</code></td>
                     <td class="align-middle"><span class="badge ${u.role === 'admin' ? 'bg-warning text-dark' : 'bg-secondary'}">${u.role}</span></td>
                     <td class="align-middle text-muted small">${new Date(u.createdAt).toLocaleDateString('es-ES')}</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-outline-danger" onclick="adminDeleteUser('${u._id}','${escHtml(u.username)}')"><i class="bi bi-trash"></i></button>
+                    <td class="text-end d-flex gap-2 justify-content-end">
+                        <button class="btn btn-sm btn-outline-warning" onclick="adminChangePassword('${u._id}','${escHtml(u.username)}')" title="Cambiar contraseña"><i class="bi bi-key"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"  onclick="adminDeleteUser('${u._id}','${escHtml(u.username)}')"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -372,6 +373,7 @@ const routes = {
                         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-projects"><i class="bi bi-code-slash me-1"></i>Proyectos</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-stack"><i class="bi bi-grid me-1"></i>Stack</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-users"><i class="bi bi-people me-1"></i>Usuarios</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-account"><i class="bi bi-person-gear me-1"></i>Mi Cuenta</button></li>
                     </ul>
 
                     <div class="tab-content">
@@ -398,6 +400,29 @@ const routes = {
                                     <thead class="table-active"><tr><th>Usuario</th><th>Rol</th><th>Creado</th><th></th></tr></thead>
                                     <tbody>${userRows || '<tr><td colspan="4" class="text-muted text-center">Sin usuarios.</td></tr>'}</tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-account">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6">
+                                    <div class="glass-card p-4 rounded-3">
+                                        <h5 class="fw-bold mb-1"><i class="bi bi-shield-lock me-2"></i>Cambiar mi contraseña</h5>
+                                        <p class="text-muted small mb-4">Actualiza la contraseña de tu cuenta de administrador.</p>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Nueva contraseña</label>
+                                            <input type="password" class="form-control" id="own-pw-1" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label small fw-semibold">Confirmar contraseña</label>
+                                            <input type="password" class="form-control" id="own-pw-2" placeholder="Repite la contraseña" autocomplete="new-password">
+                                        </div>
+                                        <div id="own-pw-error" class="text-danger small mb-3 d-none"></div>
+                                        <button class="btn btn-warning w-100 rounded-pill fw-semibold" onclick="adminSaveOwnPassword()">
+                                            <i class="bi bi-key me-1"></i>Actualizar contraseña
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -638,4 +663,65 @@ window.adminDeleteUser = async (id, name) => {
     const res = await adminApi(`/api/auth/users/${id}`, 'DELETE');
     if (res.ok) { adminAlert('Usuario eliminado'); adminRefresh(); }
     else adminAlert('Error al eliminar usuario', false);
+};
+
+window.adminChangePassword = (id, username) => {
+    adminModal(`<i class="bi bi-key me-2"></i>Cambiar contraseña — <span class="text-primary">${escHtml(username)}</span>`, `
+        <div class="mb-3"><label class="form-label small fw-semibold">Nueva contraseña</label>
+            <input type="password" class="form-control" id="cpf-pw1" placeholder="Mínimo 8 caracteres" autocomplete="new-password"></div>
+        <div class="mb-3"><label class="form-label small fw-semibold">Confirmar contraseña</label>
+            <input type="password" class="form-control" id="cpf-pw2" placeholder="Repite la contraseña" autocomplete="new-password"></div>
+        <div id="cpf-error" class="text-danger small mb-3 d-none"></div>
+        <button class="btn btn-warning w-100 rounded-pill fw-semibold" onclick="adminSavePassword('${id}')">
+            <i class="bi bi-key me-1"></i>Guardar contraseña
+        </button>`);
+};
+
+window.adminSavePassword = async (id) => {
+    const pw1   = document.getElementById('cpf-pw1').value;
+    const pw2   = document.getElementById('cpf-pw2').value;
+    const errEl = document.getElementById('cpf-error');
+
+    if (pw1.length < 8) {
+        errEl.textContent = 'La contraseña debe tener al menos 8 caracteres';
+        errEl.classList.remove('d-none'); return;
+    }
+    if (pw1 !== pw2) {
+        errEl.textContent = 'Las contraseñas no coinciden';
+        errEl.classList.remove('d-none'); return;
+    }
+
+    const res  = await adminApi(`/api/auth/users/${id}/password`, 'PATCH', { password: pw1 });
+    const data = await res.json();
+    if (res.ok) { adminCloseModal(); adminAlert('Contraseña actualizada ✓'); }
+    else { errEl.textContent = data.message || 'Error al cambiar contraseña'; errEl.classList.remove('d-none'); }
+};
+
+window.adminSaveOwnPassword = async () => {
+    const pw1   = document.getElementById('own-pw-1').value;
+    const pw2   = document.getElementById('own-pw-2').value;
+    const errEl = document.getElementById('own-pw-error');
+
+    if (pw1.length < 8) {
+        errEl.textContent = 'La contraseña debe tener al menos 8 caracteres';
+        errEl.classList.remove('d-none'); return;
+    }
+    if (pw1 !== pw2) {
+        errEl.textContent = 'Las contraseñas no coinciden';
+        errEl.classList.remove('d-none'); return;
+    }
+
+    const token = localStorage.getItem('token');
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const res  = await adminApi(`/api/auth/users/${payload.userId}/password`, 'PATCH', { password: pw1 });
+    const data = await res.json();
+    if (res.ok) {
+        errEl.classList.add('d-none');
+        document.getElementById('own-pw-1').value = '';
+        document.getElementById('own-pw-2').value = '';
+        adminAlert('Contraseña actualizada ✓');
+    } else {
+        errEl.textContent = data.message || 'Error al cambiar contraseña';
+        errEl.classList.remove('d-none');
+    }
 };

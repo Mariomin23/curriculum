@@ -88,4 +88,21 @@ router.delete('/users/:id', auth, isAdmin, async (req, res) => {
   }
 });
 
+// CHANGE PASSWORD (Admin only — can change any user's password including their own)
+router.patch('/users/:id/password', auth, isAdmin, async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password || typeof password !== 'string' || password.length < 8 || password.length > 128) {
+      return res.status(400).json({ message: 'La contraseña debe tener entre 8 y 128 caracteres' });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    user.password = await bcrypt.hash(password, 12);
+    await user.save();
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al cambiar contraseña' });
+  }
+});
+
 module.exports = router;
