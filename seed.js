@@ -55,13 +55,13 @@ async function seed() {
     await Content.deleteMany();
 
     // Crear Admin
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('Madrid2026', 10);
     await User.create({
-      username: 'admin',
+      username: 'mario.minuesa@gmail.com',
       password: hashedPassword,
       role: 'admin'
     });
-    console.log('Usuario admin creado (username: admin, password: admin123)');
+    console.log('Usuario admin creado (username: mario.minuesa@gmail.com)');
 
     // Crear contenido inicial
     await Content.create({ section: 'stack', data: stackData });
