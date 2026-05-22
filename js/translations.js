@@ -13,7 +13,7 @@ const translations = {
         home_title: "Mario Minuesa | Desarrollador Fullstack",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "Recién graduado apasionado por crear experiencias digitales fluidas. Combino mi base técnica en sistemas con desarrollo web moderno para construir soluciones completas.",
+        hero_desc: "Apasionado por crear experiencias digitales fluidas. Combino mi base en sistemas y redes con desarrollo web moderno y desarrollo de APIs REST, permitiéndome construir soluciones completas, escalables y perfectamente conectadas. Diseñando arquitecturas robustas desde la infraestructura hasta la interfaz, logro que cada componente del ecosistema digital funcione en total sintonía.",
         hero_btn_projects: "Ver Proyectos",
         hero_btn_contact: "Contactar",
 
@@ -81,7 +81,9 @@ const translations = {
         home_title: "Mario Minuesa | Fullstack Developer",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "Recent graduate passionate about creating fluid digital experiences. I combine my systems background with modern web development to build complete solutions.",
+        hero_desc: "I am passionate about creating seamless digital experiences. I combine my background in systems and networks with modern web development and REST API development, enabling me to build comprehensive, scalable and seamlessly integrated solutions. By designing robust architectures from the infrastructure right through to the user interface, I ensure that every component of the digital ecosystem works in perfect harmony."
+
+Translated with DeepL.com (free version)",
         hero_btn_projects: "View Projects",
         hero_btn_contact: "Contact Me",
 
