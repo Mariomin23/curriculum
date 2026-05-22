@@ -401,17 +401,17 @@ const routes = {
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Shared Admin Modal -->
-                    <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content glass-card border-0 shadow-lg">
-                                <div class="modal-header border-0">
-                                    <h5 class="modal-title fw-bold" id="adminModalTitle"></h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body pt-0" id="adminModalBody"></div>
+                <!-- Modal fuera de .fade-in para evitar stacking context de transform -->
+                <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card border-0 shadow-lg">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title fw-bold" id="adminModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
+                            <div class="modal-body pt-0" id="adminModalBody"></div>
                         </div>
                     </div>
                 </div>
