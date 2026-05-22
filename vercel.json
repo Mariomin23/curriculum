@@ -3,44 +3,23 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.jpg",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.jpeg",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "cv.pdf",
-      "use": "@vercel/static"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "index.html",
+          "js/**",
+          "css/**",
+          "*.jpg",
+          "*.jpeg",
+          "cv.pdf"
+        ]
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/server.js"
     }
   ]
 }
