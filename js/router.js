@@ -3,52 +3,23 @@ const getT = () => {
     return translations[lang];
 };
 
-const stackData = [
-    { name: 'HTML5',      icon: 'bi-filetype-html', cat: 'frontend', color: 'danger' },
-    { name: 'CSS3',       icon: 'bi-filetype-css',  cat: 'frontend', color: 'primary' },
-    { name: 'JavaScript', icon: 'bi-filetype-js',   cat: 'frontend', color: 'warning' },
-    { name: 'React',      icon: 'bi-braces-asterisk', cat: 'frontend', color: 'info' },
-    { name: 'Bootstrap',  icon: 'bi-bootstrap-fill', cat: 'frontend', color: 'purple' },
-    { name: 'Node.js',    icon: 'bi-server',         cat: 'backend',  color: 'success' },
-    { name: 'Express.js', icon: 'bi-lightning-fill', cat: 'backend',  color: 'secondary' },
-    { name: 'MySQL',      icon: 'bi-database-fill',  cat: 'db',       color: 'primary' },
-    { name: 'MongoDB',    icon: 'bi-database',       cat: 'db',       color: 'success' },
-    { name: 'Git',        icon: 'bi-git',            cat: 'tools',    color: 'danger' },
-    { name: 'GitHub',     icon: 'bi-github',         cat: 'tools',    color: 'secondary' },
-    { name: 'Linux',      icon: 'bi-terminal-fill',  cat: 'tools',    color: 'warning' },
-    { name: 'VS Code',    icon: 'bi-code-square',    cat: 'tools',    color: 'info' },
-    { name: 'Docker',     icon: 'bi-box-seam',       cat: 'tools',    color: 'primary' },
-];
+// Global variable to cache content
+let apiContent = null;
 
-const getProjects = (lang) => [
-    {
-        title: 'DevShop',
-        desc: lang === 'es'
-            ? 'Marketplace full-stack con autenticación JWT, carrito de compras y panel de administración. React en el frontend y Node.js con MongoDB en el backend.'
-            : 'Full-stack marketplace with JWT auth, shopping cart and admin panel. React frontend with Node.js and MongoDB backend.',
-        tags: ['React', 'Node.js', 'MongoDB', 'JWT'],
-        github: 'https://github.com/Mariomin23',
-        demo: null,
-    },
-    {
-        title: 'TaskFlow API',
-        desc: lang === 'es'
-            ? 'API REST para gestión de tareas con autenticación de usuarios, roles y permisos. Documentada con Swagger y testeada con Jest.'
-            : 'REST API for task management with user authentication, roles and permissions. Documented with Swagger and tested with Jest.',
-        tags: ['Express.js', 'MySQL', 'JWT', 'Swagger'],
-        github: 'https://github.com/Mariomin23',
-        demo: null,
-    },
-    {
-        title: 'Portfolio CV',
-        desc: lang === 'es'
-            ? 'Este mismo sitio: SPA con routing hash-based, i18n ES/EN, tema claro/oscuro y diseño mobile-first. 0 dependencias de frontend salvo Bootstrap.'
-            : 'This very site: SPA with hash-based routing, ES/EN i18n, dark/light theme and mobile-first design. 0 frontend dependencies besides Bootstrap.',
-        tags: ['JavaScript', 'Bootstrap', 'HTML5', 'CSS3'],
-        github: 'https://github.com/Mariomin23',
-        demo: null,
-    },
-];
+const fetchContent = async () => {
+    if (apiContent) return apiContent;
+    try {
+        const res = await fetch('/api/content');
+        if (res.ok) {
+            apiContent = await res.json();
+        } else {
+            apiContent = { stack: [], projects: [] };
+        }
+    } catch (e) {
+        apiContent = { stack: [], projects: [] };
+    }
+    return apiContent;
+};
 
 const routes = {
     '/': {
@@ -89,10 +60,13 @@ const routes = {
 
     '/proyectos': {
         getTitle: () => getT().projects_page_title,
-        render: () => {
+        render: async () => {
             const t = getT();
             const lang = localStorage.getItem('lang') || 'es';
-            const projects = getProjects(lang);
+            const content = await fetchContent();
+            // Try to use DB data, otherwise fallback to empty
+            const projects = content.projects || [];
+
             return `
                 <div class="fade-in">
                     <h2 class="section-header mb-5">${t.projects_header}</h2>
@@ -130,8 +104,10 @@ const routes = {
 
     '/stack': {
         getTitle: () => getT().stack_page_title,
-        render: () => {
+        render: async () => {
             const t = getT();
+            const content = await fetchContent();
+            const stackData = content.stack || [];
             const cats = [
                 { key: 'frontend', label: t.stack_cat_frontend, icon: 'bi-display' },
                 { key: 'backend',  label: t.stack_cat_backend,  icon: 'bi-server' },
@@ -310,6 +286,47 @@ const routes = {
                 </div>
             `;
         }
+    },
+
+    '/admin': {
+        getTitle: () => 'Panel de Administración',
+        render: async () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if (!token || role !== 'admin') {
+                setTimeout(() => location.hash = '/', 100);
+                return '<div class="text-center py-5">Redirigiendo...</div>';
+            }
+            
+            const content = await fetchContent();
+
+            return `
+                <div class="fade-in">
+                    <h2 class="section-header mb-4"><i class="bi bi-shield-lock me-2"></i>Panel de Administración</h2>
+                    <div class="alert alert-info">Bienvenido al área de administración. Desde aquí podrás gestionar el contenido (Próximamente).</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card glass-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Proyectos en BD</h5>
+                                    <p class="display-6">${content.projects ? content.projects.length : 0}</p>
+                                    <button class="btn btn-outline-primary btn-sm mt-2 disabled">Gestionar Proyectos</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card glass-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Stack en BD</h5>
+                                    <p class="display-6">${content.stack ? content.stack.length : 0}</p>
+                                    <button class="btn btn-outline-primary btn-sm mt-2 disabled">Gestionar Stack</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     }
 };
 
@@ -320,13 +337,22 @@ const setActiveNav = () => {
     });
 };
 
-const router = () => {
+const router = async () => {
     const root = document.getElementById('app-root');
     const path = location.hash.slice(1) || '/';
     const route = routes[path] || routes['/'];
 
     document.title = route.getTitle();
-    root.innerHTML = route.render();
+    
+    // Check if render is async
+    const renderResult = route.render();
+    if (renderResult instanceof Promise) {
+        root.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+        root.innerHTML = await renderResult;
+    } else {
+        root.innerHTML = renderResult;
+    }
+    
     setActiveNav();
 
     const navContent = document.getElementById('navContent');

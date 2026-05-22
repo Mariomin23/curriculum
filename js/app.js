@@ -46,15 +46,83 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLanguage(currentLang);
     });
 
-    // Login button — coming soon toast
+    // Login & JWT Logic
     const loginBtn = document.getElementById('loginBtn');
+    const loginModalEl = document.getElementById('loginModal');
+    const loginModal = loginModalEl ? new bootstrap.Modal(loginModalEl) : null;
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+
+    const updateLoginState = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            loginBtn.innerHTML = '<i class="bi bi-box-arrow-right me-1"></i>Logout';
+            loginBtn.classList.replace('btn-outline-primary', 'btn-outline-danger');
+            
+            // Add Admin link if it doesn't exist
+            if (!document.getElementById('adminNavLink')) {
+                const navItem = document.createElement('li');
+                navItem.className = 'nav-item';
+                navItem.innerHTML = '<a class="nav-link text-warning fw-bold" href="#/admin" data-route="/admin" id="adminNavLink"><i class="bi bi-shield-lock me-1"></i>Admin</a>';
+                document.querySelector('.navbar-nav').insertBefore(navItem, loginBtn.parentElement);
+            }
+        } else {
+            loginBtn.innerHTML = '<i class="bi bi-person-lock me-1"></i>Login';
+            loginBtn.classList.replace('btn-outline-danger', 'btn-outline-primary');
+            const adminLink = document.getElementById('adminNavLink');
+            if (adminLink) adminLink.parentElement.remove();
+        }
+    };
+
+    updateLoginState();
+
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
-            const t = translations[currentLang];
-            const toastEl = document.getElementById('loginToast');
-            document.getElementById('loginToastTitle').textContent = t.login_toast_title;
-            document.getElementById('loginToastBody').textContent = t.login_toast_body;
-            bootstrap.Toast.getOrCreateInstance(toastEl).show();
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Logout
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                updateLoginState();
+                location.hash = '/'; // Go home
+            } else {
+                if (loginModal) loginModal.show();
+            }
+        });
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
+            
+            loginError.classList.add('d-none');
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    loginModal.hide();
+                    loginForm.reset();
+                    updateLoginState();
+                    location.hash = '/admin'; // Redirect to admin panel
+                } else {
+                    loginError.textContent = data.message;
+                    loginError.classList.remove('d-none');
+                }
+            } catch (err) {
+                loginError.textContent = 'Error de conexión con el servidor.';
+                loginError.classList.remove('d-none');
+            }
         });
     }
 

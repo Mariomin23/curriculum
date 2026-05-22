@@ -84,6 +84,32 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0 shadow-lg">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="loginModalLabel"><i class="bi bi-shield-lock me-2"></i>Acceso Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Usuario</label>
+                            <input type="text" class="form-control bg-body-tertiary border-0" id="loginUser" required autocomplete="username">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-semibold">Contraseña</label>
+                            <input type="password" class="form-control bg-body-tertiary border-0" id="loginPass" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Iniciar Sesión</button>
+                    </form>
+                    <div id="loginError" class="text-danger small mt-3 text-center d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer py-3 border-top bg-body-tertiary">
         <div class="container text-center text-muted">
