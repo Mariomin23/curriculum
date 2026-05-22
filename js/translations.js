@@ -81,9 +81,7 @@ const translations = {
         home_title: "Mario Minuesa | Fullstack Developer",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "I am passionate about creating seamless digital experiences. I combine my background in systems and networks with modern web development and REST API development, enabling me to build comprehensive, scalable and seamlessly integrated solutions. By designing robust architectures from the infrastructure right through to the user interface, I ensure that every component of the digital ecosystem works in perfect harmony."
-
-Translated with DeepL.com (free version)",
+        hero_desc: "I am passionate about creating seamless digital experiences. I combine my background in systems and networks with modern web development and REST API development, enabling me to build comprehensive, scalable and seamlessly integrated solutions. By designing robust architectures from the infrastructure right through to the user interface, I ensure that every component of the digital ecosystem works in perfect harmony.",
         hero_btn_projects: "View Projects",
         hero_btn_contact: "Contact Me",
 
