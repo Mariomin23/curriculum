@@ -2,8 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss');
 const path = require('path');
 
 const authRoutes = require('./server/routes/authRoutes');
@@ -12,6 +11,20 @@ const contentRoutes = require('./server/routes/contentRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Sanitiza recursivamente strings en un objeto — elimina operadores NoSQL y escapa XSS
+function sanitizeObject(obj) {
+  if (!obj || typeof obj !== 'object') return;
+  for (const key of Object.keys(obj)) {
+    if (key.startsWith('$') || key.includes('.')) {
+      delete obj[key];
+    } else if (typeof obj[key] === 'string') {
+      obj[key] = xss(obj[key]);
+    } else if (typeof obj[key] === 'object') {
+      sanitizeObject(obj[key]);
+    }
+  }
+}
+
 // Configuración de la Base de Datos
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Conectado a MongoDB'))
@@ -19,13 +32,14 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Middlewares Globales
 app.use(cors());
-app.use(express.json({ limit: '10kb' })); // Limita el tamaño del payload contra buffer overflows
+app.use(express.json({ limit: '10kb' }));
 
-// Seguridad: Sanitización de datos
-// Data sanitization contra NoSQL query injection
-app.use(mongoSanitize());
-// Data sanitization contra XSS
-app.use(xss());
+// Seguridad: sanitización NoSQL + XSS sobre req.body y req.params
+app.use((req, res, next) => {
+  sanitizeObject(req.body);
+  sanitizeObject(req.params);
+  next();
+});
 
 // Servir archivos estáticos del frontend (la raíz del proyecto salvo /server)
 app.use(express.static(path.join(__dirname)));
@@ -35,7 +49,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 
 // Ruta por defecto para SPA (Fallback a index.html)
-app.get('*', (req, res) => {
+app.get('/*path', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
