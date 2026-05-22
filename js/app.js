@@ -55,16 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateLoginState = () => {
         const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
         if (token) {
             loginBtn.innerHTML = '<i class="bi bi-box-arrow-right me-1"></i>Logout';
             loginBtn.classList.replace('btn-outline-primary', 'btn-outline-danger');
-            
-            // Add Admin link if it doesn't exist
-            if (!document.getElementById('adminNavLink')) {
+
+            if (role === 'admin' && !document.getElementById('adminNavLink')) {
                 const navItem = document.createElement('li');
                 navItem.className = 'nav-item';
                 navItem.innerHTML = '<a class="nav-link text-warning fw-bold" href="#/admin" data-route="/admin" id="adminNavLink"><i class="bi bi-shield-lock me-1"></i>Admin</a>';
                 document.querySelector('.navbar-nav').insertBefore(navItem, loginBtn.parentElement);
+            } else if (role !== 'admin') {
+                const adminLink = document.getElementById('adminNavLink');
+                if (adminLink) adminLink.parentElement.remove();
             }
         } else {
             loginBtn.innerHTML = '<i class="bi bi-person-lock me-1"></i>Login';
