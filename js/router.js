@@ -65,42 +65,64 @@ const routes = {
         getTitle: () => getT().projects_page_title,
         render: async () => {
             const t = getT();
-            const lang = localStorage.getItem('lang') || 'es';
             const content = await fetchContent();
-            // Try to use DB data, otherwise fallback to empty
             const projects = content.projects || [];
+            const isAdmin = localStorage.getItem('role') === 'admin' && localStorage.getItem('token');
+
+            if (isAdmin) adminState.projects = projects;
+
+            const cards = projects.map((p, i) => `
+                <div class="col-md-4">
+                    <div class="card h-100 project-card glass-card position-relative">
+                        ${isAdmin ? `
+                        <div class="position-absolute top-0 end-0 d-flex gap-1 p-2" style="z-index:10">
+                            <button class="btn btn-sm btn-outline-primary" onclick="adminEditProject(${i})" title="Editar"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="adminDeleteProject(${i})" title="Eliminar"><i class="bi bi-trash"></i></button>
+                        </div>` : ''}
+                        <div class="img-placeholder">
+                            <i class="bi bi-code-slash"></i>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold mb-2">${p.title}</h5>
+                            <p class="card-text text-muted small mb-3">${p.desc}</p>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                ${p.tags.map(tag => `<span class="badge bg-primary bg-opacity-75">${tag}</span>`).join('')}
+                            </div>
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="${p.github}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-github me-1"></i>${t.projects_github}
+                                </a>
+                                ${p.demo
+                                    ? `<a href="${p.demo}" target="_blank" class="btn btn-sm btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>${t.projects_demo}</a>`
+                                    : `<span class="btn btn-sm btn-outline-secondary disabled opacity-50"><i class="bi bi-hourglass me-1"></i>${t.projects_wip}</span>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
 
             return `
                 <div class="fade-in">
-                    <h2 class="section-header mb-5">${t.projects_header}</h2>
-                    <div class="row g-4">
-                        ${projects.map(p => `
-                            <div class="col-md-4">
-                                <div class="card h-100 project-card glass-card">
-                                    <div class="img-placeholder">
-                                        <i class="bi bi-code-slash"></i>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title fw-bold mb-2">${p.title}</h5>
-                                        <p class="card-text text-muted small mb-3">${p.desc}</p>
-                                        <div class="d-flex flex-wrap gap-2 mb-3">
-                                            ${p.tags.map(tag => `<span class="badge bg-primary bg-opacity-75">${tag}</span>`).join('')}
-                                        </div>
-                                        <div class="d-flex gap-2 mt-auto">
-                                            <a href="${p.github}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-github me-1"></i>${t.projects_github}
-                                            </a>
-                                            ${p.demo
-                                                ? `<a href="${p.demo}" target="_blank" class="btn btn-sm btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>${t.projects_demo}</a>`
-                                                : `<span class="btn btn-sm btn-outline-secondary disabled opacity-50"><i class="bi bi-hourglass me-1"></i>${t.projects_wip}</span>`
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h2 class="section-header mb-0">${t.projects_header}</h2>
+                        ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminAddProject()"><i class="bi bi-plus-lg me-1"></i>Añadir Proyecto</button>` : ''}
                     </div>
+                    ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
+                    <div class="row g-4">${cards}</div>
                 </div>
+                ${isAdmin ? `
+                <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card border-0 shadow-lg">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title fw-bold" id="adminModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body pt-0" id="adminModalBody"></div>
+                        </div>
+                    </div>
+                </div>` : ''}
             `;
         }
     },
