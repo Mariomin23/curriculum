@@ -259,16 +259,32 @@ const routes = {
 
     '/curriculum': {
         getTitle: () => getT().cv_page_title,
-        render: () => {
+        render: async () => {
             const t = getT();
+            const content = await fetchContent();
+            const isAdmin = localStorage.getItem('role') === 'admin' && localStorage.getItem('token');
+            const lang = localStorage.getItem('lang') || 'es';
+
+            const cvData = content.cv || {};
+            if (isAdmin) adminState.cv = cvData;
+
+            const downloadUrl = (lang === 'en' && cvData.downloadUrlEn)
+                ? cvData.downloadUrlEn
+                : (cvData.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf');
+            const previewImg  = cvData.previewImg || 'cv.jpeg';
+
             return `
                 <div class="fade-in text-center py-5">
-                    <h2 class="section-header mb-3">${t.cv_header}</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h2 class="section-header mb-0">${t.cv_header}</h2>
+                        ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminEditCv()"><i class="bi bi-pencil me-1"></i>Editar CV</button>` : ''}
+                    </div>
+                    ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
                     <p class="lead text-muted mb-5 mx-auto" style="max-width:600px;">${t.cv_desc}</p>
 
                     <div class="cv-preview-container d-inline-block p-3 rounded-4 shadow-sm mb-5 glass-card"
                          onclick="document.getElementById('cv-modal').classList.add('active')">
-                        <img src="cv.jpeg" alt="CV Preview" class="rounded-3"
+                        <img src="${escHtml(previewImg)}" alt="CV Preview" class="rounded-3"
                              style="width:220px;height:300px;object-fit:cover;">
                         <div class="mt-3 small text-primary fw-semibold">
                             <i class="bi bi-fullscreen me-1"></i> Ver a pantalla completa
@@ -276,7 +292,7 @@ const routes = {
                     </div>
 
                     <div class="d-block">
-                        <a href="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf" class="btn btn-primary btn-lg rounded-pill px-5 shadow" download>
+                        <a href="${escHtml(downloadUrl)}" class="btn btn-primary btn-lg rounded-pill px-5 shadow" download>
                             <i class="bi bi-download me-2"></i>${t.cv_btn}
                         </a>
                     </div>
@@ -284,7 +300,7 @@ const routes = {
                     <div id="cv-modal" onclick="this.classList.remove('active')">
                         <div class="cv-modal-inner" onclick="event.stopPropagation()">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <a href="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf" download class="btn btn-light btn-sm rounded-pill px-3 shadow-sm fw-bold">
+                                <a href="${escHtml(downloadUrl)}" download class="btn btn-light btn-sm rounded-pill px-3 shadow-sm fw-bold">
                                     <i class="bi bi-download me-1"></i> Descargar PDF
                                 </a>
                                 <button onclick="document.getElementById('cv-modal').classList.remove('active')"
@@ -293,10 +309,22 @@ const routes = {
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
-                            <iframe src="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white"></iframe>
+                            <iframe src="${escHtml(downloadUrl)}#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white"></iframe>
                         </div>
                     </div>
                 </div>
+                ${isAdmin ? `
+                <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card border-0 shadow-lg">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title fw-bold" id="adminModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body pt-0" id="adminModalBody"></div>
+                        </div>
+                    </div>
+                </div>` : ''}
             `;
         }
     },
@@ -368,6 +396,7 @@ const routes = {
             const content = await fetchContent();
             adminState.projects = content.projects || [];
             adminState.stack    = content.stack    || [];
+            adminState.cv       = content.cv       || {};
 
             try {
                 const r = await fetch('/api/auth/users', { headers: { 'Authorization': `Bearer ${token}` } });
@@ -436,6 +465,7 @@ const routes = {
                     <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
                         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-projects"><i class="bi bi-code-slash me-1"></i>Proyectos</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-stack"><i class="bi bi-grid me-1"></i>Stack</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-cv"><i class="bi bi-file-earmark-pdf me-1"></i>CV</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-users"><i class="bi bi-people me-1"></i>Usuarios</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-account"><i class="bi bi-person-gear me-1"></i>Mi Cuenta</button></li>
                     </ul>
@@ -453,6 +483,34 @@ const routes = {
                                 <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminAddStack()"><i class="bi bi-plus-lg me-1"></i>Añadir Tecnología</button>
                             </div>
                             <div class="row g-2" id="stack-list">${stackCards || '<p class="text-muted col-12">Sin tecnologías.</p>'}</div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-cv">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="glass-card p-4 rounded-3">
+                                        <h5 class="fw-bold mb-1"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Currículum descargable</h5>
+                                        <p class="text-muted small mb-4">Cambia los enlaces de descarga sin tocar el código. Puede ser una ruta local del servidor o una URL externa (Google Drive, Dropbox…).</p>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">URL del CV (Español)</label>
+                                            <input type="text" class="form-control font-monospace" id="cv-url-es" value="${escHtml(content.cv?.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
+                                            <div class="form-text">Ruta relativa (archivo en el servidor) o URL completa.</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">URL del CV (Inglés) <span class="text-muted fw-normal">— opcional</span></label>
+                                            <input type="text" class="form-control font-monospace" id="cv-url-en" value="${escHtml(content.cv?.downloadUrlEn || '')}" placeholder="ruta/al/cv-en.pdf o https://...">
+                                            <div class="form-text">Si está vacío se usa el mismo CV en ES para ambos idiomas.</div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label small fw-semibold">Imagen de previsualización <span class="text-muted fw-normal">— opcional</span></label>
+                                            <input type="text" class="form-control font-monospace" id="cv-preview-img" value="${escHtml(content.cv?.previewImg || 'cv.jpeg')}" placeholder="cv.jpeg o https://...">
+                                        </div>
+                                        <button class="btn btn-primary w-100 rounded-pill fw-semibold" onclick="adminSaveCv()">
+                                            <i class="bi bi-save me-1"></i>Guardar configuración CV
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="tab-pane fade" id="tab-users">
@@ -846,6 +904,37 @@ window.adminSaveAbout = async () => {
     adminCloseModal();
     if (res.ok) { adminAlert('Sobre mí guardado ✓'); adminRefresh(); }
     else adminAlert('Error al guardar', false);
+};
+
+// ── CV ────────────────────────────────────────────────────────────────────────
+
+window.adminEditCv = () => {
+    const cv = adminState.cv || {};
+    adminModal('<i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Editar CV descargable', `
+        <p class="text-muted small mb-3">Puede ser una ruta local del servidor o una URL externa (Google Drive, Dropbox…).</p>
+        <div class="mb-3"><label class="form-label small fw-semibold">URL del CV (Español)</label>
+            <input type="text" class="form-control font-monospace" id="cvf-url-es" value="${escHtml(cv.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
+            <div class="form-text">Ruta relativa (archivo en el servidor) o URL completa.</div></div>
+        <div class="mb-3"><label class="form-label small fw-semibold">URL del CV (Inglés) <span class="text-muted fw-normal">— opcional</span></label>
+            <input type="text" class="form-control font-monospace" id="cvf-url-en" value="${escHtml(cv.downloadUrlEn || '')}" placeholder="ruta/al/cv-en.pdf o https://...">
+            <div class="form-text">Si está vacío se usa el mismo CV en ES para ambos idiomas.</div></div>
+        <div class="mb-4"><label class="form-label small fw-semibold">Imagen de previsualización <span class="text-muted fw-normal">— opcional</span></label>
+            <input type="text" class="form-control font-monospace" id="cvf-preview-img" value="${escHtml(cv.previewImg || 'cv.jpeg')}" placeholder="cv.jpeg o https://..."></div>
+        <button class="btn btn-primary w-100 mt-2" onclick="adminSaveCv(true)">Guardar cambios</button>`);
+};
+
+window.adminSaveCv = async (fromModal = false) => {
+    const prefix = fromModal ? 'cvf' : 'cv';
+    const downloadUrl    = document.getElementById(`${prefix}-url-es`)?.value.trim();
+    const downloadUrlEn  = document.getElementById(`${prefix}-url-en`)?.value.trim() || null;
+    const previewImg     = document.getElementById(`${prefix}-preview-img`)?.value.trim() || 'cv.jpeg';
+
+    if (!downloadUrl) { adminAlert('La URL del CV (ES) no puede estar vacía', false); return; }
+
+    const res = await adminApi('/api/content/cv', 'PUT', { data: { downloadUrl, downloadUrlEn, previewImg } });
+    if (fromModal) adminCloseModal();
+    if (res.ok) { adminAlert('CV actualizado ✓'); adminRefresh(); }
+    else adminAlert('Error al guardar el CV', false);
 };
 
 window.adminSaveOwnPassword = async () => {
