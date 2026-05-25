@@ -270,7 +270,7 @@ const routes = {
 
             const downloadUrl = (lang === 'en' && cvData.downloadUrlEn)
                 ? cvData.downloadUrlEn
-                : (cvData.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf');
+                : (cvData.downloadUrl || 'cvmario.pdf');
             const previewImg  = cvData.previewImg || 'cv.jpeg';
 
             return `
@@ -508,7 +508,7 @@ const routes = {
                                                 </div>
                                             </div>
                                             <label class="form-label small fw-semibold mt-2">… o pega una URL</label>
-                                            <input type="text" class="form-control font-monospace" id="cv-url-es" value="${escHtml(content.cv?.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
+                                            <input type="text" class="form-control font-monospace" id="cv-url-es" value="${escHtml(content.cv?.downloadUrl || 'cvmario.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
                                         </div>
 
                                         <div class="mb-3">
@@ -1022,7 +1022,7 @@ window.adminEditCv = () => {
                     <span class="small text-muted">Arrastra el PDF aquí o haz clic</span>
                 </div>
             </div>
-            <input type="text" class="form-control font-monospace mt-2" id="cvf-url-es" value="${escHtml(cv.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
+            <input type="text" class="form-control font-monospace mt-2" id="cvf-url-es" value="${escHtml(cv.downloadUrl || 'cvmario.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
         </div>
 
         <div class="mb-3">

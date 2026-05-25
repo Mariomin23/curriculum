@@ -1,22 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
 const multer = require('multer');
+const { put } = require('@vercel/blob');
 const Content = require('../models/Content');
 const { auth, isAdmin } = require('../middlewares/auth');
 
-const UPLOADS_DIR = path.join(__dirname, '../../uploads');
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
-  filename: (req, file, cb) => {
-    const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
-    cb(null, `${Date.now()}_${safeName}`);
-  }
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
@@ -25,15 +15,26 @@ const upload = multer({
   }
 });
 
-// POST upload CV file (Admin only)
+// POST upload CV file → Vercel Blob (Admin only)
 router.post('/cv/upload', auth, isAdmin, (req, res) => {
-  upload.single('file')(req, res, (err) => {
+  upload.single('file')(req, res, async (err) => {
     if (err) {
       const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
       return res.status(status).json({ message: err.message });
     }
     if (!req.file) return res.status(400).json({ message: 'No se recibió ningún archivo' });
-    res.json({ url: `/uploads/${req.file.filename}`, name: req.file.originalname });
+
+    try {
+      const safeName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const blob = await put(`cv/${Date.now()}_${safeName}`, req.file.buffer, {
+        access: 'public',
+        contentType: req.file.mimetype,
+      });
+      res.json({ url: blob.url, name: req.file.originalname });
+    } catch (e) {
+      console.error('Blob upload error:', e);
+      res.status(500).json({ message: 'Error al subir el archivo al almacenamiento' });
+    }
   });
 });
 
