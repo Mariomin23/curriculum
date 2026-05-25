@@ -276,7 +276,7 @@ const routes = {
                     </div>
 
                     <div class="d-block">
-                        <a href="cv.pdf" class="btn btn-primary btn-lg rounded-pill px-5 shadow" download>
+                        <a href="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf" class="btn btn-primary btn-lg rounded-pill px-5 shadow" download>
                             <i class="bi bi-download me-2"></i>${t.cv_btn}
                         </a>
                     </div>
@@ -284,7 +284,7 @@ const routes = {
                     <div id="cv-modal" onclick="this.classList.remove('active')">
                         <div class="cv-modal-inner" onclick="event.stopPropagation()">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <a href="cv.pdf" download class="btn btn-light btn-sm rounded-pill px-3 shadow-sm fw-bold">
+                                <a href="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf" download class="btn btn-light btn-sm rounded-pill px-3 shadow-sm fw-bold">
                                     <i class="bi bi-download me-1"></i> Descargar PDF
                                 </a>
                                 <button onclick="document.getElementById('cv-modal').classList.remove('active')"
@@ -293,7 +293,7 @@ const routes = {
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
-                            <iframe src="cv.pdf#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white"></iframe>
+                            <iframe src="cv%20minuesa.es%20Pro%20updated%20JUN26.pdf#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white"></iframe>
                         </div>
                     </div>
                 </div>
