@@ -71,7 +71,11 @@ const routes = {
 
             if (isAdmin) adminState.projects = projects;
 
-            const cards = projects.map((p, i) => `
+            const lang = localStorage.getItem('lang') || 'es';
+            const cards = projects.map((p, i) => {
+                const title = (lang === 'en' && p.title_en) ? p.title_en : p.title;
+                const desc  = (lang === 'en' && p.desc_en)  ? p.desc_en  : p.desc;
+                return `
                 <div class="col-md-4">
                     <div class="card h-100 project-card glass-card position-relative">
                         ${isAdmin ? `
@@ -83,8 +87,8 @@ const routes = {
                             <i class="bi bi-code-slash"></i>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold mb-2">${p.title}</h5>
-                            <p class="card-text text-muted small mb-3">${p.desc}</p>
+                            <h5 class="card-title fw-bold mb-2">${title}</h5>
+                            <p class="card-text text-muted small mb-3">${desc}</p>
                             <div class="d-flex flex-wrap gap-2 mb-3">
                                 ${p.tags.map(tag => `<span class="badge bg-primary bg-opacity-75">${tag}</span>`).join('')}
                             </div>
@@ -100,7 +104,7 @@ const routes = {
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `; }).join('');
 
             return `
                 <div class="fade-in">
@@ -176,14 +180,32 @@ const routes = {
             const isAdmin = localStorage.getItem('role') === 'admin' && localStorage.getItem('token');
 
             const aboutDB = content.about || null;
-            const p1  = aboutDB?.p1 ?? t.about_p1;
-            const p2  = aboutDB?.p2 ?? t.about_p2;
-            const edu = aboutDB?.edu || [
+            const lang = localStorage.getItem('lang') || 'es';
+            const useEn = lang === 'en';
+
+            let p1, p2, edu;
+            if (aboutDB) {
+                p1  = (useEn && aboutDB.p1_en) ? aboutDB.p1_en : aboutDB.p1;
+                p2  = (useEn && aboutDB.p2_en) ? aboutDB.p2_en : aboutDB.p2;
+                edu = (aboutDB.edu || []).map(e => ({
+                    ...e,
+                    title: (useEn && e.title_en) ? e.title_en : e.title,
+                    org:   (useEn && e.org_en)   ? e.org_en   : e.org,
+                    desc:  (useEn && e.desc_en)  ? e.desc_en  : e.desc,
+                }));
+            } else {
+                p1  = t.about_p1;
+                p2  = t.about_p2;
+                edu = [
+                    { title: t.about_edu_1_title, org: t.about_edu_1_org, date: t.about_edu_1_date, desc: t.about_edu_1_desc, color: 'primary' },
+                    { title: t.about_edu_2_title, org: t.about_edu_2_org, date: t.about_edu_2_date, desc: t.about_edu_2_desc, color: 'secondary' }
+                ];
+            }
+
+            if (isAdmin) adminState.about = aboutDB || { p1: t.about_p1, p2: t.about_p2, edu: [
                 { title: t.about_edu_1_title, org: t.about_edu_1_org, date: t.about_edu_1_date, desc: t.about_edu_1_desc, color: 'primary' },
                 { title: t.about_edu_2_title, org: t.about_edu_2_org, date: t.about_edu_2_date, desc: t.about_edu_2_desc, color: 'secondary' }
-            ];
-
-            if (isAdmin) adminState.about = { p1, p2, edu };
+            ] };
 
             const eduHTML = edu.map(e => `
                 <div class="timeline-item">
@@ -556,6 +578,15 @@ const adminCloseModal = () => {
     bootstrap.Modal.getInstance(document.getElementById('adminModal'))?.hide();
 };
 
+const translateText = async (text, from = 'es', to = 'en') => {
+    if (!text) return text;
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`);
+        const data = await res.json();
+        return data.responseStatus === 200 ? data.responseData.translatedText : text;
+    } catch { return text; }
+};
+
 // ── Projects ──────────────────────────────────────────────────────────────────
 
 const projectForm = (p = {}) => `
@@ -590,8 +621,13 @@ window.adminSaveProject = async (isNew, idx) => {
 
     if (!title || !desc) return;
 
+    const btn = document.querySelector('#adminModalBody button');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Traduciendo...'; }
+
+    const [title_en, desc_en] = await Promise.all([translateText(title), translateText(desc)]);
+
     const projects = [...adminState.projects];
-    const entry = { title, desc, tags, github, demo };
+    const entry = { title, title_en, desc, desc_en, tags, github, demo };
     if (isNew) projects.push(entry);
     else projects[idx] = entry;
 
@@ -793,7 +829,20 @@ window.adminSaveAbout = async () => {
         { title: document.getElementById('aaf-e1-title').value.trim(), org: document.getElementById('aaf-e1-org').value.trim(), date: document.getElementById('aaf-e1-date').value.trim(), desc: document.getElementById('aaf-e1-desc').value.trim(), color: document.getElementById('aaf-e1-color').value },
         { title: document.getElementById('aaf-e2-title').value.trim(), org: document.getElementById('aaf-e2-org').value.trim(), date: document.getElementById('aaf-e2-date').value.trim(), desc: document.getElementById('aaf-e2-desc').value.trim(), color: document.getElementById('aaf-e2-color').value },
     ];
-    const res = await adminApi('/api/content/about', 'PUT', { data: { p1, p2, edu } });
+
+    const btn = document.querySelector('#adminModalBody button');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Traduciendo...'; }
+
+    const [p1_en, p2_en, e1t, e1o, e1d, e2t, e2o, e2d] = await Promise.all([
+        translateText(p1), translateText(p2),
+        translateText(edu[0].title), translateText(edu[0].org), translateText(edu[0].desc),
+        translateText(edu[1].title), translateText(edu[1].org), translateText(edu[1].desc),
+    ]);
+
+    edu[0] = { ...edu[0], title_en: e1t, org_en: e1o, desc_en: e1d };
+    edu[1] = { ...edu[1], title_en: e2t, org_en: e2o, desc_en: e2d };
+
+    const res = await adminApi('/api/content/about', 'PUT', { data: { p1, p1_en, p2, p2_en, edu } });
     adminCloseModal();
     if (res.ok) { adminAlert('Sobre mí guardado ✓'); adminRefresh(); }
     else adminAlert('Error al guardar', false);
