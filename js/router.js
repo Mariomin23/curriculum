@@ -170,47 +170,67 @@ const routes = {
 
     '/sobre-mi': {
         getTitle: () => getT().about_page_title,
-        render: () => {
+        render: async () => {
             const t = getT();
+            const content = await fetchContent();
+            const isAdmin = localStorage.getItem('role') === 'admin' && localStorage.getItem('token');
+
+            const aboutDB = content.about || null;
+            const p1  = aboutDB?.p1 ?? t.about_p1;
+            const p2  = aboutDB?.p2 ?? t.about_p2;
+            const edu = aboutDB?.edu || [
+                { title: t.about_edu_1_title, org: t.about_edu_1_org, date: t.about_edu_1_date, desc: t.about_edu_1_desc, color: 'primary' },
+                { title: t.about_edu_2_title, org: t.about_edu_2_org, date: t.about_edu_2_date, desc: t.about_edu_2_desc, color: 'secondary' }
+            ];
+
+            if (isAdmin) adminState.about = { p1, p2, edu };
+
+            const eduHTML = edu.map(e => `
+                <div class="timeline-item">
+                    <div class="timeline-dot bg-${escHtml(e.color)}"></div>
+                    <div class="glass-card p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0">${escHtml(e.title)}</h6>
+                            <span class="badge bg-${escHtml(e.color)} bg-opacity-75 small">${escHtml(e.date)}</span>
+                        </div>
+                        <div class="text-${escHtml(e.color)} small fw-semibold mb-2">${escHtml(e.org)}</div>
+                        <p class="text-muted small mb-0">${escHtml(e.desc)}</p>
+                    </div>
+                </div>
+            `).join('');
+
             return `
                 <div class="fade-in">
-                    <h2 class="section-header mb-5">${t.about_header}</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h2 class="section-header mb-0">${t.about_header}</h2>
+                        ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminEditAbout()"><i class="bi bi-pencil me-1"></i>Editar</button>` : ''}
+                    </div>
+                    ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
                     <div class="row g-5">
                         <div class="col-md-7">
-                            <p class="fs-5 mb-4">${t.about_p1}</p>
-                            <p class="fs-5">${t.about_p2}</p>
+                            <p class="fs-5 mb-4">${p1}</p>
+                            <p class="fs-5">${p2}</p>
                         </div>
                         <div class="col-md-5">
                             <h5 class="fw-semibold text-primary mb-4">
                                 <i class="bi bi-mortarboard-fill me-2"></i>${t.about_timeline_title}
                             </h5>
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-dot bg-primary"></div>
-                                    <div class="glass-card p-3 rounded-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <h6 class="fw-bold mb-0">${t.about_edu_1_title}</h6>
-                                            <span class="badge bg-primary bg-opacity-75 small">${t.about_edu_1_date}</span>
-                                        </div>
-                                        <div class="text-primary small fw-semibold mb-2">${t.about_edu_1_org}</div>
-                                        <p class="text-muted small mb-0">${t.about_edu_1_desc}</p>
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot bg-secondary"></div>
-                                    <div class="glass-card p-3 rounded-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <h6 class="fw-bold mb-0">${t.about_edu_2_title}</h6>
-                                            <span class="badge bg-secondary bg-opacity-75 small">${t.about_edu_2_date}</span>
-                                        </div>
-                                        <div class="text-secondary small fw-semibold mb-2">${t.about_edu_2_org}</div>
-                                        <p class="text-muted small mb-0">${t.about_edu_2_desc}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="timeline">${eduHTML}</div>
                         </div>
                     </div>
                 </div>
+                ${isAdmin ? `
+                <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content glass-card border-0 shadow-lg">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title fw-bold" id="adminModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body pt-0" id="adminModalBody"></div>
+                        </div>
+                    </div>
+                </div>` : ''}
             `;
         }
     },
@@ -717,6 +737,66 @@ window.adminSavePassword = async (id) => {
     const data = await res.json();
     if (res.ok) { adminCloseModal(); adminAlert('Contraseña actualizada ✓'); }
     else { errEl.textContent = data.message || 'Error al cambiar contraseña'; errEl.classList.remove('d-none'); }
+};
+
+// ── About ─────────────────────────────────────────────────────────────────────
+
+const ABOUT_COLORS = ['primary','secondary','success','danger','warning','info'];
+
+const aboutForm = (a = {}) => {
+    const edu = a.edu || [{}, {}];
+    const colorOpts = (sel) => ABOUT_COLORS.map(c => `<option value="${c}" ${sel===c?'selected':''}>${c}</option>`).join('');
+    return `
+        <div class="mb-3"><label class="form-label small fw-semibold">Párrafo 1 (HTML permitido)</label>
+            <textarea class="form-control font-monospace" id="aaf-p1" rows="4">${escHtml(a.p1||'')}</textarea></div>
+        <div class="mb-3"><label class="form-label small fw-semibold">Párrafo 2 (HTML permitido)</label>
+            <textarea class="form-control font-monospace" id="aaf-p2" rows="4">${escHtml(a.p2||'')}</textarea></div>
+        <hr>
+        <p class="fw-semibold small text-primary mb-3">Formación 1</p>
+        <div class="mb-2"><label class="form-label small">Título</label>
+            <input type="text" class="form-control" id="aaf-e1-title" value="${escHtml(edu[0]?.title||'')}"></div>
+        <div class="row g-2 mb-2">
+            <div class="col-8"><label class="form-label small">Organización</label>
+                <input type="text" class="form-control" id="aaf-e1-org" value="${escHtml(edu[0]?.org||'')}"></div>
+            <div class="col-4"><label class="form-label small">Fecha</label>
+                <input type="text" class="form-control" id="aaf-e1-date" value="${escHtml(edu[0]?.date||'')}"></div>
+        </div>
+        <div class="mb-2"><label class="form-label small">Descripción</label>
+            <textarea class="form-control" id="aaf-e1-desc" rows="2">${escHtml(edu[0]?.desc||'')}</textarea></div>
+        <div class="mb-3"><label class="form-label small">Color</label>
+            <select class="form-select" id="aaf-e1-color">${colorOpts(edu[0]?.color)}</select></div>
+        <hr>
+        <p class="fw-semibold small text-primary mb-3">Formación 2</p>
+        <div class="mb-2"><label class="form-label small">Título</label>
+            <input type="text" class="form-control" id="aaf-e2-title" value="${escHtml(edu[1]?.title||'')}"></div>
+        <div class="row g-2 mb-2">
+            <div class="col-8"><label class="form-label small">Organización</label>
+                <input type="text" class="form-control" id="aaf-e2-org" value="${escHtml(edu[1]?.org||'')}"></div>
+            <div class="col-4"><label class="form-label small">Fecha</label>
+                <input type="text" class="form-control" id="aaf-e2-date" value="${escHtml(edu[1]?.date||'')}"></div>
+        </div>
+        <div class="mb-2"><label class="form-label small">Descripción</label>
+            <textarea class="form-control" id="aaf-e2-desc" rows="2">${escHtml(edu[1]?.desc||'')}</textarea></div>
+        <div class="mb-3"><label class="form-label small">Color</label>
+            <select class="form-select" id="aaf-e2-color">${colorOpts(edu[1]?.color)}</select></div>`;
+};
+
+window.adminEditAbout = () => {
+    adminModal('<i class="bi bi-pencil me-2"></i>Editar Sobre Mí',
+        aboutForm(adminState.about) + `<button class="btn btn-primary w-100 mt-2" onclick="adminSaveAbout()">Guardar cambios</button>`);
+};
+
+window.adminSaveAbout = async () => {
+    const p1  = document.getElementById('aaf-p1').value.trim();
+    const p2  = document.getElementById('aaf-p2').value.trim();
+    const edu = [
+        { title: document.getElementById('aaf-e1-title').value.trim(), org: document.getElementById('aaf-e1-org').value.trim(), date: document.getElementById('aaf-e1-date').value.trim(), desc: document.getElementById('aaf-e1-desc').value.trim(), color: document.getElementById('aaf-e1-color').value },
+        { title: document.getElementById('aaf-e2-title').value.trim(), org: document.getElementById('aaf-e2-org').value.trim(), date: document.getElementById('aaf-e2-date').value.trim(), desc: document.getElementById('aaf-e2-desc').value.trim(), color: document.getElementById('aaf-e2-color').value },
+    ];
+    const res = await adminApi('/api/content/about', 'PUT', { data: { p1, p2, edu } });
+    adminCloseModal();
+    if (res.ok) { adminAlert('Sobre mí guardado ✓'); adminRefresh(); }
+    else adminAlert('Error al guardar', false);
 };
 
 window.adminSaveOwnPassword = async () => {
