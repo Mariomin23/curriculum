@@ -307,6 +307,14 @@ main { flex: 1; }
     .stack-icon { font-size: 1.6rem; }
 }
 
+/* CV drop zones */
+.border-dashed { border-style: dashed !important; }
+
+.cv-drop-zone,
+[id^="drop-"], [id^="mdrop-"] {
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
 @media (max-width: 375px) {
     .hero-title    { font-size: 1.75rem; }
     .hero-subtitle { font-size: 1rem !important; }

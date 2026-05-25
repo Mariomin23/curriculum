@@ -490,21 +490,65 @@ const routes = {
                                 <div class="col-md-8">
                                     <div class="glass-card p-4 rounded-3">
                                         <h5 class="fw-bold mb-1"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Currículum descargable</h5>
-                                        <p class="text-muted small mb-4">Cambia los enlaces de descarga sin tocar el código. Puede ser una ruta local del servidor o una URL externa (Google Drive, Dropbox…).</p>
+                                        <p class="text-muted small mb-4">Sube un PDF arrastrándolo o usando el selector. También puedes pegar una URL externa.</p>
+
                                         <div class="mb-3">
-                                            <label class="form-label small fw-semibold">URL del CV (Español)</label>
+                                            <label class="form-label small fw-semibold">CV en Español — subir archivo</label>
+                                            <div class="cv-drop-zone rounded-3 border border-2 border-dashed p-4 text-center position-relative"
+                                                 id="drop-es"
+                                                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondrop="adminDropCv(event,'es')"
+                                                 onclick="document.getElementById('file-es').click()"
+                                                 style="cursor:pointer;min-height:90px">
+                                                <input type="file" id="file-es" accept=".pdf" class="d-none" onchange="adminUploadCv(this.files[0],'es')">
+                                                <div id="drop-es-status">
+                                                    <i class="bi bi-cloud-upload fs-3 text-muted d-block mb-1"></i>
+                                                    <span class="small text-muted">Arrastra el PDF aquí o haz clic para seleccionar</span>
+                                                </div>
+                                            </div>
+                                            <label class="form-label small fw-semibold mt-2">… o pega una URL</label>
                                             <input type="text" class="form-control font-monospace" id="cv-url-es" value="${escHtml(content.cv?.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
-                                            <div class="form-text">Ruta relativa (archivo en el servidor) o URL completa.</div>
                                         </div>
+
                                         <div class="mb-3">
-                                            <label class="form-label small fw-semibold">URL del CV (Inglés) <span class="text-muted fw-normal">— opcional</span></label>
+                                            <label class="form-label small fw-semibold">CV en Inglés — subir archivo <span class="text-muted fw-normal">— opcional</span></label>
+                                            <div class="cv-drop-zone rounded-3 border border-2 border-dashed p-4 text-center position-relative"
+                                                 id="drop-en"
+                                                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondrop="adminDropCv(event,'en')"
+                                                 onclick="document.getElementById('file-en').click()"
+                                                 style="cursor:pointer;min-height:90px">
+                                                <input type="file" id="file-en" accept=".pdf" class="d-none" onchange="adminUploadCv(this.files[0],'en')">
+                                                <div id="drop-en-status">
+                                                    <i class="bi bi-cloud-upload fs-3 text-muted d-block mb-1"></i>
+                                                    <span class="small text-muted">Arrastra el PDF aquí o haz clic para seleccionar</span>
+                                                </div>
+                                            </div>
+                                            <label class="form-label small fw-semibold mt-2">… o pega una URL</label>
                                             <input type="text" class="form-control font-monospace" id="cv-url-en" value="${escHtml(content.cv?.downloadUrlEn || '')}" placeholder="ruta/al/cv-en.pdf o https://...">
                                             <div class="form-text">Si está vacío se usa el mismo CV en ES para ambos idiomas.</div>
                                         </div>
+
                                         <div class="mb-4">
                                             <label class="form-label small fw-semibold">Imagen de previsualización <span class="text-muted fw-normal">— opcional</span></label>
+                                            <div class="cv-drop-zone rounded-3 border border-2 border-dashed p-3 text-center position-relative mb-2"
+                                                 id="drop-img"
+                                                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                                                 ondrop="adminDropCv(event,'img')"
+                                                 onclick="document.getElementById('file-img').click()"
+                                                 style="cursor:pointer;min-height:70px">
+                                                <input type="file" id="file-img" accept="image/*" class="d-none" onchange="adminUploadCv(this.files[0],'img')">
+                                                <div id="drop-img-status">
+                                                    <i class="bi bi-image fs-3 text-muted d-block mb-1"></i>
+                                                    <span class="small text-muted">Arrastra una imagen o haz clic para seleccionar</span>
+                                                </div>
+                                            </div>
                                             <input type="text" class="form-control font-monospace" id="cv-preview-img" value="${escHtml(content.cv?.previewImg || 'cv.jpeg')}" placeholder="cv.jpeg o https://...">
                                         </div>
+
                                         <button class="btn btn-primary w-100 rounded-pill fw-semibold" onclick="adminSaveCv()">
                                             <i class="bi bi-save me-1"></i>Guardar configuración CV
                                         </button>
@@ -908,18 +952,115 @@ window.adminSaveAbout = async () => {
 
 // ── CV ────────────────────────────────────────────────────────────────────────
 
+// slot: 'es'|'en'|'img' (tab) or 'mes'|'men'|'mimg' (modal)
+const CV_SLOT_MAP = {
+    es:   { input: 'cv-url-es',      status: 'drop-es-status',  zone: 'drop-es'  },
+    en:   { input: 'cv-url-en',      status: 'drop-en-status',  zone: 'drop-en'  },
+    img:  { input: 'cv-preview-img', status: 'drop-img-status', zone: 'drop-img' },
+    mes:  { input: 'cvf-url-es',     status: 'mdrop-es-status', zone: 'mdrop-es' },
+    men:  { input: 'cvf-url-en',     status: 'mdrop-en-status', zone: 'mdrop-en' },
+    mimg: { input: 'cvf-preview-img',status: 'mdrop-img-status',zone: 'mdrop-img'},
+};
+
+window.adminDropCv = (event, slot) => {
+    event.preventDefault();
+    const zone = document.getElementById(CV_SLOT_MAP[slot].zone);
+    if (zone) zone.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10');
+    const file = event.dataTransfer?.files?.[0];
+    if (file) adminUploadCv(file, slot);
+};
+
+window.adminUploadCv = async (file, slot) => {
+    if (!file) return;
+    const { input, status, zone } = CV_SLOT_MAP[slot];
+    const statusEl = document.getElementById(status);
+    const zoneEl   = document.getElementById(zone);
+
+    if (statusEl) statusEl.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span><span class="small text-muted">Subiendo ${escHtml(file.name)}…</span>`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/content/cv/upload', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+            const inputEl = document.getElementById(input);
+            if (inputEl) inputEl.value = data.url;
+            if (statusEl) statusEl.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i><span class="small text-success fw-semibold">${escHtml(data.name)}</span>`;
+            if (zoneEl) zoneEl.classList.add('border-success');
+        } else {
+            if (statusEl) statusEl.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i><span class="small text-danger">${escHtml(data.message)}</span>`;
+        }
+    } catch (e) {
+        if (statusEl) statusEl.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i><span class="small text-danger">Error de conexión</span>`;
+    }
+};
+
 window.adminEditCv = () => {
     const cv = adminState.cv || {};
     adminModal('<i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Editar CV descargable', `
-        <p class="text-muted small mb-3">Puede ser una ruta local del servidor o una URL externa (Google Drive, Dropbox…).</p>
-        <div class="mb-3"><label class="form-label small fw-semibold">URL del CV (Español)</label>
-            <input type="text" class="form-control font-monospace" id="cvf-url-es" value="${escHtml(cv.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
-            <div class="form-text">Ruta relativa (archivo en el servidor) o URL completa.</div></div>
-        <div class="mb-3"><label class="form-label small fw-semibold">URL del CV (Inglés) <span class="text-muted fw-normal">— opcional</span></label>
-            <input type="text" class="form-control font-monospace" id="cvf-url-en" value="${escHtml(cv.downloadUrlEn || '')}" placeholder="ruta/al/cv-en.pdf o https://...">
-            <div class="form-text">Si está vacío se usa el mismo CV en ES para ambos idiomas.</div></div>
-        <div class="mb-4"><label class="form-label small fw-semibold">Imagen de previsualización <span class="text-muted fw-normal">— opcional</span></label>
-            <input type="text" class="form-control font-monospace" id="cvf-preview-img" value="${escHtml(cv.previewImg || 'cv.jpeg')}" placeholder="cv.jpeg o https://..."></div>
+        <p class="text-muted small mb-3">Sube un PDF arrastrándolo o pega una URL externa.</p>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold">CV en Español — subir archivo</label>
+            <div class="rounded-3 border border-2 border-dashed p-3 text-center"
+                 id="mdrop-es"
+                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                 ondrop="adminDropCv(event,'mes')"
+                 onclick="document.getElementById('mfile-es').click()"
+                 style="cursor:pointer;min-height:80px">
+                <input type="file" id="mfile-es" accept=".pdf" class="d-none" onchange="adminUploadCv(this.files[0],'mes')">
+                <div id="mdrop-es-status">
+                    <i class="bi bi-cloud-upload fs-4 text-muted d-block mb-1"></i>
+                    <span class="small text-muted">Arrastra el PDF aquí o haz clic</span>
+                </div>
+            </div>
+            <input type="text" class="form-control font-monospace mt-2" id="cvf-url-es" value="${escHtml(cv.downloadUrl || 'cv%20minuesa.es%20Pro%20updated%20JUN26.pdf')}" placeholder="ruta/al/cv.pdf o https://...">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold">CV en Inglés — subir archivo <span class="text-muted fw-normal">— opcional</span></label>
+            <div class="rounded-3 border border-2 border-dashed p-3 text-center"
+                 id="mdrop-en"
+                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                 ondrop="adminDropCv(event,'men')"
+                 onclick="document.getElementById('mfile-en').click()"
+                 style="cursor:pointer;min-height:80px">
+                <input type="file" id="mfile-en" accept=".pdf" class="d-none" onchange="adminUploadCv(this.files[0],'men')">
+                <div id="mdrop-en-status">
+                    <i class="bi bi-cloud-upload fs-4 text-muted d-block mb-1"></i>
+                    <span class="small text-muted">Arrastra el PDF aquí o haz clic</span>
+                </div>
+            </div>
+            <input type="text" class="form-control font-monospace mt-2" id="cvf-url-en" value="${escHtml(cv.downloadUrlEn || '')}" placeholder="ruta/al/cv-en.pdf o https://...">
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label small fw-semibold">Imagen preview <span class="text-muted fw-normal">— opcional</span></label>
+            <div class="rounded-3 border border-2 border-dashed p-3 text-center"
+                 id="mdrop-img"
+                 ondragover="event.preventDefault();this.classList.add('border-primary','bg-primary','bg-opacity-10')"
+                 ondragleave="this.classList.remove('border-primary','bg-primary','bg-opacity-10')"
+                 ondrop="adminDropCv(event,'mimg')"
+                 onclick="document.getElementById('mfile-img').click()"
+                 style="cursor:pointer;min-height:70px">
+                <input type="file" id="mfile-img" accept="image/*" class="d-none" onchange="adminUploadCv(this.files[0],'mimg')">
+                <div id="mdrop-img-status">
+                    <i class="bi bi-image fs-4 text-muted d-block mb-1"></i>
+                    <span class="small text-muted">Arrastra una imagen o haz clic</span>
+                </div>
+            </div>
+            <input type="text" class="form-control font-monospace mt-2" id="cvf-preview-img" value="${escHtml(cv.previewImg || 'cv.jpeg')}" placeholder="cv.jpeg o https://...">
+        </div>
+
         <button class="btn btn-primary w-100 mt-2" onclick="adminSaveCv(true)">Guardar cambios</button>`);
 };
 
