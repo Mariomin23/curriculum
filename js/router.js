@@ -41,8 +41,8 @@ const routes = {
                         <h2 class="h3 text-primary mb-4 hero-subtitle">${t.hero_subtitle}</h2>
                         <p class="lead text-muted mb-4">${t.hero_desc}</p>
                         <div class="d-flex flex-wrap gap-3 justify-content-lg-end mb-4">
-                            <a href="#/proyectos" class="btn btn-primary btn-lg px-4 hero-btn">${t.hero_btn_projects}</a>
-                            <a href="#/contacto" class="btn btn-outline-secondary btn-lg px-4 hero-btn">${t.hero_btn_contact}</a>
+                            <a href="/proyectos" class="btn btn-primary btn-lg px-4 hero-btn">${t.hero_btn_projects}</a>
+                            <a href="/contacto" class="btn btn-outline-secondary btn-lg px-4 hero-btn">${t.hero_btn_contact}</a>
                         </div>
                         <div class="d-flex gap-3 justify-content-lg-end social-links">
                             <a href="https://github.com/Mariomin23" target="_blank" class="social-link" title="GitHub">
@@ -389,7 +389,7 @@ const routes = {
             const token = localStorage.getItem('token');
             const role  = localStorage.getItem('role');
             if (!token || role !== 'admin') {
-                setTimeout(() => { location.hash = '/'; }, 100);
+                setTimeout(() => { history.pushState(null, '', '/'); router(); }, 100);
                 return `<div class="text-center py-5 text-muted"><i class="bi bi-lock me-2"></i>Acceso restringido. Redirigiendo...</div>`;
             }
 
@@ -612,7 +612,7 @@ const routes = {
 };
 
 const setActiveNav = () => {
-    const path = location.hash.slice(1) || '/';
+    const path = location.pathname || '/';
     document.querySelectorAll('[data-route]').forEach(link => {
         link.classList.toggle('active', link.dataset.route === path);
     });
@@ -620,7 +620,7 @@ const setActiveNav = () => {
 
 const router = async () => {
     const root = document.getElementById('app-root');
-    const path = location.hash.slice(1) || '/';
+    const path = location.pathname || '/';
     const route = routes[path] || routes['/'];
 
     document.title = route.getTitle();
@@ -645,8 +645,20 @@ const router = async () => {
     window.scrollTo(0, 0);
 };
 
-window.addEventListener('hashchange', router);
+window.addEventListener('popstate', router);
 window.addEventListener('load', router);
+
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('/') || link.target === '_blank') return;
+    e.preventDefault();
+    if (location.pathname !== href) {
+        history.pushState(null, '', href);
+        router();
+    }
+});
 
 // ── Admin helpers ─────────────────────────────────────────────────────────────
 

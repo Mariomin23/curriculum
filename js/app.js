@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (role === 'admin' && !document.getElementById('adminNavLink')) {
                 const navItem = document.createElement('li');
                 navItem.className = 'nav-item';
-                navItem.innerHTML = '<a class="nav-link text-warning fw-bold" href="#/admin" data-route="/admin" id="adminNavLink"><i class="bi bi-shield-lock me-1"></i>Admin</a>';
+                navItem.innerHTML = '<a class="nav-link text-warning fw-bold" href="/admin" data-route="/admin" id="adminNavLink"><i class="bi bi-shield-lock me-1"></i>Admin</a>';
                 document.querySelector('.navbar-nav').insertBefore(navItem, loginBtn.parentElement);
             } else if (role !== 'admin') {
                 const adminLink = document.getElementById('adminNavLink');
@@ -87,7 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
                 updateLoginState();
-                location.hash = '/'; // Go home
+                history.pushState(null, '', '/');
+                router();
             } else {
                 if (loginModal) loginModal.show();
             }
@@ -123,10 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginModal.hide();
                     loginForm.reset();
                     updateLoginState();
-                    if (location.hash === '#/admin') {
+                    if (location.pathname === '/admin') {
                         router();
                     } else {
-                        location.hash = '/admin';
+                        history.pushState(null, '', '/admin');
+                        router();
                     }
                 } else {
                     loginError.textContent = data.message;
