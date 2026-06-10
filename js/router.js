@@ -46,7 +46,7 @@ const routes = {
                             <a href="https://github.com/Mariomin23" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub" aria-label="GitHub">
                                 <i class="bi bi-github"></i>
                             </a>
-                            <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn" aria-label="LinkedIn">
+                            <a href="www.linkedin.com/in/mariominuesa" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn" aria-label="LinkedIn">
                                 <i class="bi bi-linkedin"></i>
                             </a>
                             <a href="mailto:hola@tripleeme.es" class="social-link" title="Email">
@@ -378,7 +378,7 @@ const routes = {
                                 </div>
                                 <h6 class="fw-bold mb-1">${t.contact_linkedin_label}</h6>
                                 <p class="text-muted small mb-3">linkedin.com/in/mario-minuesa</p>
-                                <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
+                                <a href="www.linkedin.com/in/mariominuesa" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
                                     ${t.contact_btn_linkedin}
                                 </a>
                             </div>
