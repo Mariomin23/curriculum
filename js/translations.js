@@ -13,7 +13,7 @@ const translations = {
         home_title: "Mario Minuesa | Desarrollador Fullstack",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "Apasionado por crear experiencias digitales fluidas. Combino mi base en sistemas y redes con desarrollo web moderno y desarrollo de APIs REST, permitiéndome construir soluciones completas, escalables y perfectamente conectadas. Diseñando arquitecturas robustas desde la infraestructura hasta la interfaz, logro que cada componente del ecosistema digital funcione en total sintonía.",
+        hero_desc: "Construyo aplicaciones web completas, del servidor a la interfaz, combinando desarrollo moderno con mi base en sistemas y redes. Busco soluciones limpias, escalables y bien conectadas.",
         hero_btn_projects: "Ver Proyectos",
         hero_btn_contact: "Contactar",
 
@@ -49,6 +49,7 @@ const translations = {
         cv_header: "Currículum Vitae",
         cv_desc: "Descarga mi CV actualizado en PDF o visualízalo directamente aquí.",
         cv_btn: "Descargar PDF",
+        cv_fullscreen: "Ver a pantalla completa",
 
         contact_page_title: "Contacto | Mario Minuesa",
         contact_header: "Hablemos",
@@ -81,7 +82,7 @@ const translations = {
         home_title: "Mario Minuesa | Fullstack Developer",
         hero_title: "Mario Minuesa",
         hero_subtitle: "Fullstack Developer & Systems Technician",
-        hero_desc: "I am passionate about creating seamless digital experiences. I combine my background in systems and networks with modern web development and REST API development, enabling me to build comprehensive, scalable and seamlessly integrated solutions. By designing robust architectures from the infrastructure right through to the user interface, I ensure that every component of the digital ecosystem works in perfect harmony.",
+        hero_desc: "I build complete web applications, from server to interface, combining modern development with my background in systems and networks. I aim for clean, scalable, well-connected solutions.",
         hero_btn_projects: "View Projects",
         hero_btn_contact: "Contact Me",
 
@@ -117,6 +118,7 @@ const translations = {
         cv_header: "Curriculum Vitae",
         cv_desc: "Download my updated CV in PDF format or view it directly here.",
         cv_btn: "Download PDF",
+        cv_fullscreen: "View fullscreen",
 
         contact_page_title: "Contact | Mario Minuesa",
         contact_header: "Let's Talk",

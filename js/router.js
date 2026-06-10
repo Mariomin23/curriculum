@@ -36,19 +36,19 @@ const routes = {
                              class="hero-profile-img mx-auto"
                              style="width:300px;height:300px;border-radius:50%;object-fit:cover;object-position:center top;">
                     </div>
-                    <div class="col-lg-7 text-lg-end">
+                    <div class="col-lg-7">
                         <h1 class="hero-title mb-3">${t.hero_title}</h1>
                         <h2 class="h3 text-primary mb-4 hero-subtitle">${t.hero_subtitle}</h2>
                         <p class="lead text-muted mb-4">${t.hero_desc}</p>
-                        <div class="d-flex flex-wrap gap-3 justify-content-lg-end mb-4">
+                        <div class="d-flex flex-wrap gap-3 mb-4">
                             <a href="/proyectos" class="btn btn-primary btn-lg px-4 hero-btn">${t.hero_btn_projects}</a>
                             <a href="/contacto" class="btn btn-outline-secondary btn-lg px-4 hero-btn">${t.hero_btn_contact}</a>
                         </div>
-                        <div class="d-flex gap-3 justify-content-lg-end social-links">
-                            <a href="https://github.com/Mariomin23" target="_blank" class="social-link" title="GitHub">
+                        <div class="d-flex gap-3 social-links">
+                            <a href="https://github.com/Mariomin23" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub" aria-label="GitHub">
                                 <i class="bi bi-github"></i>
                             </a>
-                            <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" class="social-link" title="LinkedIn">
+                            <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn" aria-label="LinkedIn">
                                 <i class="bi bi-linkedin"></i>
                             </a>
                             <a href="mailto:hola@tripleeme.es" class="social-link" title="Email">
@@ -95,11 +95,11 @@ const routes = {
                                 ${p.tags.map(tag => `<span class="badge bg-primary bg-opacity-75">${tag}</span>`).join('')}
                             </div>
                             <div class="d-flex gap-2 mt-auto">
-                                <a href="${p.github}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-github me-1"></i>${t.projects_github}
-                                </a>
+                                ${p.github
+                                    ? `<a href="${p.github}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary"><i class="bi bi-github me-1"></i>${t.projects_github}</a>`
+                                    : ''}
                                 ${p.demo
-                                    ? `<a href="${p.demo}" target="_blank" class="btn btn-sm btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>${t.projects_demo}</a>`
+                                    ? `<a href="${p.demo}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>${t.projects_demo}</a>`
                                     : `<span class="btn btn-sm btn-outline-secondary disabled opacity-50"><i class="bi bi-hourglass me-1"></i>${t.projects_wip}</span>`
                                 }
                             </div>
@@ -111,7 +111,7 @@ const routes = {
             return `
                 <div class="fade-in">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h2 class="section-header mb-0">${t.projects_header}</h2>
+                        <h1 class="section-header h2 mb-0">${t.projects_header}</h1>
                         ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminAddProject()"><i class="bi bi-plus-lg me-1"></i>Añadir Proyecto</button>` : ''}
                     </div>
                     ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
@@ -147,7 +147,7 @@ const routes = {
             ];
             return `
                 <div class="fade-in">
-                    <h2 class="section-header mb-2">${t.stack_header}</h2>
+                    <h1 class="section-header h2 mb-2">${t.stack_header}</h1>
                     <p class="text-muted mb-5">${t.stack_desc}</p>
                     ${cats.map(cat => {
                         const items = stackData.filter(s => s.cat === cat.key);
@@ -159,7 +159,7 @@ const routes = {
                                 <div class="row g-3">
                                     ${items.map(s => `
                                         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                                            <div class="stack-card glass-card text-center p-3 rounded-3 h-100">
+                                            <div class="stack-card glass-card text-center p-3 rounded-4 h-100">
                                                 <i class="bi ${s.icon} stack-icon text-${s.color}"></i>
                                                 <div class="stack-name mt-2 fw-semibold small">${s.name}</div>
                                             </div>
@@ -212,7 +212,7 @@ const routes = {
             const eduHTML = edu.map(e => `
                 <div class="timeline-item">
                     <div class="timeline-dot bg-${escHtml(e.color)}"></div>
-                    <div class="glass-card p-3 rounded-3">
+                    <div class="glass-card p-3 rounded-4">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <h6 class="fw-bold mb-0">${escHtml(e.title)}</h6>
                             <span class="badge bg-${escHtml(e.color)} bg-opacity-75 small">${escHtml(e.date)}</span>
@@ -226,7 +226,7 @@ const routes = {
             return `
                 <div class="fade-in">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h2 class="section-header mb-0">${t.about_header}</h2>
+                        <h1 class="section-header h2 mb-0">${t.about_header}</h1>
                         ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminEditAbout()"><i class="bi bi-pencil me-1"></i>Editar</button>` : ''}
                     </div>
                     ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
@@ -278,18 +278,20 @@ const routes = {
             return `
                 <div class="fade-in text-center py-5">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h2 class="section-header mb-0">${t.cv_header}</h2>
+                        <h1 class="section-header h2 mb-0">${t.cv_header}</h1>
                         ${isAdmin ? `<button class="btn btn-primary btn-sm rounded-pill px-3" onclick="adminEditCv()"><i class="bi bi-pencil me-1"></i>Editar CV</button>` : ''}
                     </div>
                     ${isAdmin ? '<div id="admin-alert" class="d-none mb-3"></div>' : ''}
                     <p class="lead text-muted mb-5 mx-auto" style="max-width:600px;">${t.cv_desc}</p>
 
                     <div class="cv-preview-container d-inline-block p-3 rounded-4 shadow-sm mb-5 glass-card"
-                         onclick="document.getElementById('cv-modal').classList.add('active')">
+                         role="button" tabindex="0" aria-label="${t.cv_fullscreen}"
+                         onclick="document.getElementById('cv-modal').classList.add('active')"
+                         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
                         <img src="${escHtml(previewImg)}" alt="CV Preview" class="rounded-3"
                              style="width:220px;height:300px;object-fit:cover;">
                         <div class="mt-3 small text-primary fw-semibold">
-                            <i class="bi bi-fullscreen me-1"></i> Ver a pantalla completa
+                            <i class="bi bi-fullscreen me-1"></i> ${t.cv_fullscreen}
                         </div>
                     </div>
 
@@ -303,10 +305,10 @@ const routes = {
                         <div class="cv-modal-inner" onclick="event.stopPropagation()">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <a href="${escHtml(downloadUrl)}" download class="btn btn-light btn-sm rounded-pill px-3 shadow-sm fw-bold">
-                                    <i class="bi bi-download me-1"></i> Descargar PDF
+                                    <i class="bi bi-download me-1"></i> ${t.cv_btn}
                                 </a>
                                 <button onclick="document.getElementById('cv-modal').classList.remove('active')"
-                                        class="btn btn-danger btn-sm rounded-circle"
+                                        class="btn btn-danger btn-sm rounded-circle" aria-label="Cerrar"
                                         style="width:32px;height:32px;padding:0;">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
@@ -337,11 +339,11 @@ const routes = {
             const t = getT();
             return `
                 <div class="fade-in">
-                    <h2 class="section-header mb-2">${t.contact_header}</h2>
+                    <h1 class="section-header h2 mb-2">${t.contact_header}</h1>
                     <p class="text-muted mb-5">${t.contact_desc}</p>
                     <div class="row g-4 mb-5">
                         <div class="col-md-4">
-                            <div class="contact-card glass-card p-4 rounded-3 h-100 text-center">
+                            <div class="contact-card glass-card p-4 rounded-4 h-100 text-center">
                                 <div class="contact-icon mb-3">
                                     <i class="bi bi-envelope-fill text-primary"></i>
                                 </div>
@@ -353,25 +355,25 @@ const routes = {
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="contact-card glass-card p-4 rounded-3 h-100 text-center">
+                            <div class="contact-card glass-card p-4 rounded-4 h-100 text-center">
                                 <div class="contact-icon mb-3">
                                     <i class="bi bi-github text-body"></i>
                                 </div>
                                 <h6 class="fw-bold mb-1">${t.contact_github_label}</h6>
                                 <p class="text-muted small mb-3">github.com/Mariomin23</p>
-                                <a href="https://github.com/Mariomin23" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <a href="https://github.com/Mariomin23" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
                                     ${t.contact_btn_github}
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="contact-card glass-card p-4 rounded-3 h-100 text-center">
+                            <div class="contact-card glass-card p-4 rounded-4 h-100 text-center">
                                 <div class="contact-icon mb-3">
                                     <i class="bi bi-linkedin text-primary"></i>
                                 </div>
                                 <h6 class="fw-bold mb-1">${t.contact_linkedin_label}</h6>
                                 <p class="text-muted small mb-3">linkedin.com/in/mario-minuesa</p>
-                                <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <a href="https://www.linkedin.com/in/mario-minuesa" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
                                     ${t.contact_btn_linkedin}
                                 </a>
                             </div>
@@ -408,7 +410,7 @@ const routes = {
             const { projects, stack, users } = adminState;
 
             const projectRows = projects.map((p, i) => `
-                <div class="glass-card p-3 rounded-3 mb-3">
+                <div class="glass-card p-3 rounded-4 mb-3">
                     <div class="d-flex align-items-start gap-3">
                         <div class="flex-grow-1 min-w-0">
                             <h6 class="fw-bold mb-1">${escHtml(p.title)}</h6>
@@ -425,7 +427,7 @@ const routes = {
 
             const stackCards = stack.map((s, i) => `
                 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                    <div class="glass-card p-2 rounded-3 text-center position-relative h-100">
+                    <div class="glass-card p-2 rounded-4 text-center position-relative h-100">
                         <i class="bi ${escHtml(s.icon)} text-${escHtml(s.color)} fs-3 d-block"></i>
                         <div class="small fw-semibold mt-1">${escHtml(s.name)}</div>
                         <div class="text-muted" style="font-size:.65rem">${escHtml(s.cat)}</div>
@@ -452,14 +454,14 @@ const routes = {
             return `
                 <div class="fade-in">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="section-header mb-0"><i class="bi bi-shield-lock me-2"></i>Admin</h2>
+                        <h1 class="section-header h2 mb-0"><i class="bi bi-shield-lock me-2"></i>Admin</h1>
                         <span class="badge bg-success fs-6 px-3 py-2">Sesión activa</span>
                     </div>
 
                     <div class="row g-3 mb-4">
-                        <div class="col-4"><div class="glass-card p-3 rounded-3 text-center"><div class="fs-2 fw-bold text-primary">${projects.length}</div><div class="small text-muted">Proyectos</div></div></div>
-                        <div class="col-4"><div class="glass-card p-3 rounded-3 text-center"><div class="fs-2 fw-bold text-success">${stack.length}</div><div class="small text-muted">Tecnologías</div></div></div>
-                        <div class="col-4"><div class="glass-card p-3 rounded-3 text-center"><div class="fs-2 fw-bold text-info">${users.length}</div><div class="small text-muted">Usuarios</div></div></div>
+                        <div class="col-4"><div class="glass-card p-3 rounded-4 text-center"><div class="fs-2 fw-bold text-primary">${projects.length}</div><div class="small text-muted">Proyectos</div></div></div>
+                        <div class="col-4"><div class="glass-card p-3 rounded-4 text-center"><div class="fs-2 fw-bold text-success">${stack.length}</div><div class="small text-muted">Tecnologías</div></div></div>
+                        <div class="col-4"><div class="glass-card p-3 rounded-4 text-center"><div class="fs-2 fw-bold text-info">${users.length}</div><div class="small text-muted">Usuarios</div></div></div>
                     </div>
 
                     <div id="admin-alert" class="d-none mb-3"></div>
@@ -490,7 +492,7 @@ const routes = {
                         <div class="tab-pane fade" id="tab-cv">
                             <div class="row justify-content-center">
                                 <div class="col-md-8">
-                                    <div class="glass-card p-4 rounded-3">
+                                    <div class="glass-card p-4 rounded-4">
                                         <h5 class="fw-bold mb-1"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Currículum descargable</h5>
                                         <p class="text-muted small mb-4">Sube un PDF arrastrándolo o usando el selector. También puedes pegar una URL externa.</p>
 
@@ -574,7 +576,7 @@ const routes = {
                         <div class="tab-pane fade" id="tab-account">
                             <div class="row justify-content-center">
                                 <div class="col-md-6">
-                                    <div class="glass-card p-4 rounded-3">
+                                    <div class="glass-card p-4 rounded-4">
                                         <h5 class="fw-bold mb-1"><i class="bi bi-shield-lock me-2"></i>Cambiar mi contraseña</h5>
                                         <p class="text-muted small mb-4">Actualiza la contraseña de tu cuenta de administrador.</p>
                                         <div class="mb-3">
@@ -777,7 +779,7 @@ const stackForm = (s = {}) => `
         <input type="text" class="form-control" id="asf-name" value="${escHtml(s.name||'')}" required></div>
     <div class="mb-3"><label class="form-label small fw-semibold">Icono Bootstrap Icons (ej: bi-github)</label>
         <input type="text" class="form-control font-monospace" id="asf-icon" value="${escHtml(s.icon||'')}">
-        <div class="form-text"><a href="https://icons.getbootstrap.com" target="_blank">Ver iconos ↗</a></div></div>
+        <div class="form-text"><a href="https://icons.getbootstrap.com" target="_blank" rel="noopener noreferrer">Ver iconos ↗</a></div></div>
     <div class="row g-2 mb-3">
         <div class="col-6"><label class="form-label small fw-semibold">Categoría</label>
             <select class="form-select" id="asf-cat">

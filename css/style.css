@@ -32,6 +32,12 @@
 
 .text-primary { color: var(--bs-primary) !important; }
 .bg-primary { background-color: var(--bs-primary) !important; }
+.text-purple { color: var(--brand-accent) !important; }
+
+/* Sistema de radios unificado: botones pill, cards 1rem */
+.btn { --bs-btn-border-radius: 50rem; }
+.btn-close { border-radius: 0.375rem; }
+.glass-card { border-radius: 1rem; }
 
 /* Glows difuminados de fondo: dan profundidad y hacen visible el glassmorphism */
 body::before, body::after {
@@ -196,6 +202,7 @@ main { flex: 1; }
 .project-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: default;
+    overflow: hidden; /* recorta la captura a las esquinas redondeadas */
 }
 
 .project-card:hover {
@@ -303,6 +310,11 @@ main { flex: 1; }
     box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
+[data-bs-theme="dark"] .contact-card:hover {
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+    border-color: rgba(var(--bs-primary-rgb), 0.3);
+}
+
 .contact-icon { font-size: 2.2rem; }
 
 /* ── CV Section ──────────────────────────────────────────── */
@@ -314,6 +326,11 @@ main { flex: 1; }
 .cv-preview-container:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+[data-bs-theme="dark"] .cv-preview-container:hover {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.55);
+    border-color: rgba(var(--bs-primary-rgb), 0.35);
 }
 
 #cv-modal {
