@@ -32,9 +32,7 @@ const routes = {
             return `
                 <div class="row align-items-center min-vh-75 fade-in">
                     <div class="col-lg-5 text-center order-first order-lg-last mb-5 mb-lg-0">
-                        <img src="MarioCvdef1.jpg" alt="Mario Minuesa"
-                             class="hero-profile-img mx-auto"
-                             style="width:300px;height:300px;border-radius:50%;object-fit:cover;object-position:center top;">
+                        <img src="MarioCvdef1.jpg" alt="Mario Minuesa" class="hero-profile-img mx-auto">
                     </div>
                     <div class="col-lg-7">
                         <h1 class="hero-title mb-3">${t.hero_title}</h1>
@@ -313,7 +311,14 @@ const routes = {
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
-                            <iframe src="${escHtml(downloadUrl)}#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white"></iframe>
+                            <iframe src="${escHtml(downloadUrl)}#view=FitH" class="w-100 h-100 rounded-4 border-0 bg-white d-none d-md-block"></iframe>
+                            <!-- iOS Safari no renderiza PDFs embebidos con scroll: en móvil, imagen + descarga -->
+                            <div class="d-md-none flex-grow-1 overflow-auto text-center">
+                                <img src="${escHtml(previewImg)}" alt="CV" class="img-fluid rounded-4">
+                                <a href="${escHtml(downloadUrl)}" download class="btn btn-primary rounded-pill px-4 mt-3 d-inline-block">
+                                    <i class="bi bi-download me-2"></i>${t.cv_btn}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -632,8 +637,13 @@ const router = async () => {
     // Check if render is async
     const renderResult = route.render();
     if (renderResult instanceof Promise) {
-        root.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
-        root.innerHTML = await renderResult;
+        // Spinner solo si la carga tarda — evita parpadeo en respuestas rápidas
+        const spinnerTimer = setTimeout(() => {
+            root.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+        }, 200);
+        const html = await renderResult;
+        clearTimeout(spinnerTimer);
+        root.innerHTML = html;
     } else {
         root.innerHTML = renderResult;
     }
