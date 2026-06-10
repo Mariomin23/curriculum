@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const crypto = require('crypto');
 const { put } = require('@vercel/blob');
 const Content = require('../models/Content');
 const { auth, isAdmin } = require('../middlewares/auth');
@@ -15,6 +16,28 @@ const upload = multer({
   }
 });
 
+// Detecta el tipo real del archivo por sus magic bytes — no confía en la
+// cabecera Content-Type que envía el cliente
+function detectFileType(buffer) {
+  if (buffer.length < 12) return null;
+  if (buffer.subarray(0, 4).toString('latin1') === '%PDF') {
+    return { mime: 'application/pdf', ext: 'pdf' };
+  }
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return { mime: 'image/jpeg', ext: 'jpg' };
+  }
+  if (buffer[0] === 0x89 && buffer.subarray(1, 4).toString('latin1') === 'PNG') {
+    return { mime: 'image/png', ext: 'png' };
+  }
+  if (
+    buffer.subarray(0, 4).toString('latin1') === 'RIFF' &&
+    buffer.subarray(8, 12).toString('latin1') === 'WEBP'
+  ) {
+    return { mime: 'image/webp', ext: 'webp' };
+  }
+  return null;
+}
+
 // POST upload CV file → Vercel Blob (Admin only)
 router.post('/cv/upload', auth, isAdmin, (req, res) => {
   upload.single('file')(req, res, async (err) => {
@@ -24,11 +47,18 @@ router.post('/cv/upload', auth, isAdmin, (req, res) => {
     }
     if (!req.file) return res.status(400).json({ message: 'No se recibió ningún archivo' });
 
+    // Validación por magic bytes: el contenido real debe ser PDF o imagen,
+    // independientemente de la extensión o del Content-Type declarado
+    const fileType = detectFileType(req.file.buffer);
+    if (!fileType) {
+      return res.status(400).json({ message: 'El archivo no es un PDF o imagen válido' });
+    }
+
     try {
-      const safeName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const blob = await put(`cv/${Date.now()}_${safeName}`, req.file.buffer, {
+      // Renombrado con UUIDv4 para que nunca se sirva con su nombre original
+      const blob = await put(`cv/${crypto.randomUUID()}.${fileType.ext}`, req.file.buffer, {
         access: 'public',
-        contentType: req.file.mimetype,
+        contentType: fileType.mime,
       });
       res.json({ url: blob.url, name: req.file.originalname });
     } catch (e) {

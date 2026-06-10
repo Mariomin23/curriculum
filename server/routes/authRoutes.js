@@ -13,10 +13,25 @@ const loginLimiter = rateLimit({
   message: { message: 'Demasiados intentos de login. Por favor, intenta de nuevo en 1 minuto.' }
 });
 
+// Letras, números, '@' (emails como username), punto, guion y guion bajo —
+// bloquea comillas, ';', '--' y demás caracteres con significado en queries
+const USERNAME_REGEX = /^[a-zA-Z0-9@._-]{3,50}$/;
+
+function validCredentials(username, password) {
+  return (
+    typeof username === 'string' && USERNAME_REGEX.test(username) &&
+    typeof password === 'string' && password.length >= 8 && password.length <= 128
+  );
+}
+
 // LOGIN
 router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
+    // Respuesta genérica también ante formato inválido: no revelar qué falló
+    if (!validCredentials(username, password)) {
+      return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+    }
     const user = await User.findOne({ username });
     
     if (!user) {
@@ -44,7 +59,17 @@ router.post('/login', loginLimiter, async (req, res) => {
 router.post('/register', auth, isAdmin, async (req, res) => {
   try {
     const { username, password, role } = req.body;
-    
+
+    if (typeof username !== 'string' || !USERNAME_REGEX.test(username)) {
+      return res.status(400).json({ message: 'El usuario debe tener 3-50 caracteres: letras, números, "@", ".", "_" o "-"' });
+    }
+    if (typeof password !== 'string' || password.length < 8 || password.length > 128) {
+      return res.status(400).json({ message: 'La contraseña debe tener entre 8 y 128 caracteres' });
+    }
+    if (role !== undefined && !['user', 'admin'].includes(role)) {
+      return res.status(400).json({ message: 'Rol inválido' });
+    }
+
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'El usuario ya existe' });
