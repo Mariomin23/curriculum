@@ -7,6 +7,7 @@ const path = require('path');
 
 const authRoutes = require('./server/routes/authRoutes');
 const contentRoutes = require('./server/routes/contentRoutes');
+const translateRoutes = require('./server/routes/translateRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +48,7 @@ app.use(express.static(path.join(__dirname)));
 // Rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/translate', translateRoutes);
 
 // Ruta por defecto para SPA (Fallback a index.html)
 app.get('/*path', (req, res) => {

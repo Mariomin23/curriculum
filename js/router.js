@@ -692,12 +692,15 @@ const adminCloseModal = () => {
     bootstrap.Modal.getInstance(document.getElementById('adminModal'))?.hide();
 };
 
+// Traduce vía backend (/api/translate, Google Translate). Si falla devuelve
+// el texto original para no bloquear el guardado.
 const translateText = async (text, from = 'es', to = 'en') => {
     if (!text) return text;
     try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`);
+        const res = await adminApi('/api/translate', 'POST', { text, from, to });
+        if (!res.ok) return text;
         const data = await res.json();
-        return data.responseStatus === 200 ? data.responseData.translatedText : text;
+        return data.translated || text;
     } catch { return text; }
 };
 
