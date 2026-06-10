@@ -84,7 +84,9 @@ const routes = {
                             <button class="btn btn-sm btn-outline-danger" onclick="adminDeleteProject(${i})" title="Eliminar"><i class="bi bi-trash"></i></button>
                         </div>` : ''}
                         <div class="img-placeholder">
-                            <i class="bi bi-code-slash"></i>
+                            ${p.img
+                                ? `<img src="${escHtml(p.img)}" alt="Captura de ${escHtml(title)}" loading="lazy">`
+                                : `<i class="bi bi-code-slash"></i>`}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold mb-2">${title}</h5>
@@ -713,6 +715,8 @@ const projectForm = (p = {}) => `
         <textarea class="form-control" id="apf-desc" rows="3">${escHtml(p.desc||'')}</textarea></div>
     <div class="mb-3"><label class="form-label small fw-semibold">Tags (separadas por coma)</label>
         <input type="text" class="form-control" id="apf-tags" value="${escHtml((p.tags||[]).join(', '))}"></div>
+    <div class="mb-3"><label class="form-label small fw-semibold">URL Captura (imagen del proyecto)</label>
+        <input type="url" class="form-control" id="apf-img" value="${escHtml(p.img||'')}" placeholder="https://... (vacío = icono por defecto)"></div>
     <div class="mb-3"><label class="form-label small fw-semibold">URL GitHub</label>
         <input type="url" class="form-control" id="apf-github" value="${escHtml(p.github||'')}"></div>
     <div class="mb-3"><label class="form-label small fw-semibold">URL Demo (opcional)</label>
@@ -735,6 +739,7 @@ window.adminSaveProject = async (isNew, idx) => {
     const tags   = document.getElementById('apf-tags').value.split(',').map(t => t.trim()).filter(Boolean);
     const github = document.getElementById('apf-github').value.trim();
     const demo   = document.getElementById('apf-demo').value.trim() || null;
+    const img    = document.getElementById('apf-img').value.trim() || null;
 
     if (!title || !desc) return;
 
@@ -744,7 +749,7 @@ window.adminSaveProject = async (isNew, idx) => {
     const [title_en, desc_en] = await Promise.all([translateText(title), translateText(desc)]);
 
     const projects = [...adminState.projects];
-    const entry = { title, title_en, desc, desc_en, tags, github, demo };
+    const entry = { title, title_en, desc, desc_en, tags, github, demo, img };
     if (isNew) projects.push(entry);
     else projects[idx] = entry;
 

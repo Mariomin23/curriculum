@@ -146,5 +146,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    console.log('%cMario Minuesa Portfolio', 'color:#0d6efd;font-weight:bold;font-size:1.2rem');
+    console.log('%cMario Minuesa Portfolio', 'color:#6366f1;font-weight:bold;font-size:1.2rem');
 });

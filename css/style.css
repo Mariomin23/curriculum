@@ -2,8 +2,61 @@
     --transition-speed: 0.3s;
     --glass-bg-dark: rgba(255, 255, 255, 0.04);
     --glass-border-dark: rgba(255, 255, 255, 0.08);
-    --glass-bg-light: rgba(255, 255, 255, 0.7);
+    --glass-bg-light: rgba(255, 255, 255, 0.55);
     --glass-border-light: rgba(0, 0, 0, 0.08);
+    /* Identidad de marca: indigo en lugar del azul por defecto de Bootstrap */
+    --bs-primary: #6366f1;
+    --bs-primary-rgb: 99, 102, 241;
+    --brand-accent: #a855f7;
+}
+
+.btn-primary {
+    --bs-btn-bg: #6366f1;
+    --bs-btn-border-color: #6366f1;
+    --bs-btn-hover-bg: #4f46e5;
+    --bs-btn-hover-border-color: #4f46e5;
+    --bs-btn-active-bg: #4338ca;
+    --bs-btn-active-border-color: #4338ca;
+    --bs-btn-disabled-bg: #6366f1;
+    --bs-btn-disabled-border-color: #6366f1;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #6366f1;
+    --bs-btn-border-color: #6366f1;
+    --bs-btn-hover-bg: #6366f1;
+    --bs-btn-hover-border-color: #6366f1;
+    --bs-btn-active-bg: #4f46e5;
+    --bs-btn-active-border-color: #4f46e5;
+}
+
+.text-primary { color: var(--bs-primary) !important; }
+.bg-primary { background-color: var(--bs-primary) !important; }
+
+/* Glows difuminados de fondo: dan profundidad y hacen visible el glassmorphism */
+body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::before {
+    width: 480px;
+    height: 480px;
+    top: -10%;
+    right: -5%;
+    background: rgba(var(--bs-primary-rgb), 0.18);
+}
+
+body::after {
+    width: 400px;
+    height: 400px;
+    bottom: -10%;
+    left: -8%;
+    background: rgba(168, 85, 247, 0.12);
 }
 
 body {
@@ -116,6 +169,12 @@ main { flex: 1; }
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
+    background: linear-gradient(135deg, var(--bs-primary), var(--brand-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* el gradiente recorta el texto, así que necesita padding para no cortar descendentes */
+    padding-bottom: 0.1em;
 }
 
 .social-links { gap: 1rem; }
@@ -144,6 +203,11 @@ main { flex: 1; }
     box-shadow: 0 16px 40px rgba(0,0,0,0.12);
 }
 
+[data-bs-theme="dark"] .project-card:hover {
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    border-color: rgba(var(--bs-primary-rgb), 0.35);
+}
+
 .img-placeholder {
     aspect-ratio: 16 / 9;
     background: rgba(var(--bs-primary-rgb), 0.06);
@@ -153,6 +217,19 @@ main { flex: 1; }
     color: var(--bs-primary);
     font-size: 2.5rem;
     border-bottom: 1px solid var(--glass-border-light);
+    overflow: hidden;
+}
+
+.img-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.35s ease;
+}
+
+.project-card:hover .img-placeholder img {
+    transform: scale(1.04);
 }
 
 [data-bs-theme="dark"] .img-placeholder {
