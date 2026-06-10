@@ -26,10 +26,26 @@ function sanitizeObject(obj) {
   }
 }
 
-// Configuración de la Base de Datos
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Conectado a MongoDB'))
-  .catch((err) => console.error('❌ Error conectando a MongoDB:', err));
+// Conexión a MongoDB cacheada para serverless: la promesa se reutiliza entre
+// peticiones y cada request espera a que esté lista antes de tocar la DB,
+// evitando 500 en el arranque en frío
+let dbPromise = null;
+function connectDB() {
+  if (!dbPromise) {
+    dbPromise = mongoose.connect(process.env.MONGODB_URI)
+      .then((m) => {
+        console.log('✅ Conectado a MongoDB');
+        return m;
+      })
+      .catch((err) => {
+        console.error('❌ Error conectando a MongoDB:', err);
+        dbPromise = null; // permite reintentar en la siguiente petición
+        throw err;
+      });
+  }
+  return dbPromise;
+}
+connectDB().catch(() => {});
 
 // Middlewares Globales
 app.use(cors());
@@ -44,6 +60,16 @@ app.use((req, res, next) => {
 
 // Servir archivos estáticos del frontend (la raíz del proyecto salvo /server)
 app.use(express.static(path.join(__dirname)));
+
+// Toda ruta /api espera a que la conexión con MongoDB esté lista
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch {
+    res.status(503).json({ message: 'Base de datos no disponible, inténtalo de nuevo' });
+  }
+});
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
